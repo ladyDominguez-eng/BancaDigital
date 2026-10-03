@@ -1,0 +1,22 @@
+ <header class="topbar">
+  <div class="topbar-brand">
+    <div class="logo" aria-hidden="true">
+      <span class="logo-inner"></span>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">Banca Digital</span>
+      <span class="brand-role">• Administrador</span>
+    </div>
+  </div>
+
+  <nav class="topbar-nav">
+    <a routerLink="/admin/usuarios" routerLinkActive="active" class="nav-link">Usuarios</a>
+    <a routerLink="/admin/parametros" routerLinkActive="active" class="nav-link">Parámetros</a>
+  </nav>
+
+  <button type="button" class="btn-salir" (click)="salir()">Salir</button>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>

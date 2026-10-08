@@ -1,0 +1,89 @@
+.page-title {
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.tarjeta {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+}
+
+.titulo {
+  display: block;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.tarjeta strong {
+  display: block;
+  font-size: 28px;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.tarjeta small {
+  color: #6b7280;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.panel h2 {
+  margin: 0 0 18px;
+  font-size: 20px;
+  color: #1f2937;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+}
+
+td {
+  color: #4b5563;
+}
+
+@media (max-width: 800px) {
+
+  .resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 500px;
+  }
+}

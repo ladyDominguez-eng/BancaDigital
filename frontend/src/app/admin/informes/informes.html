@@ -1,0 +1,79 @@
+<h1 class="page-title">Informes</h1>
+
+<!-- RESUMEN -->
+<section class="resumen">
+
+  <div class="tarjeta">
+    <span class="titulo">Usuarios registrados</span>
+    <strong>{{ cuentas().totalClientes }}</strong>
+    <small>Clientes</small>
+  </div>
+
+  <div class="tarjeta">
+    <span class="titulo">Cuentas</span>
+    <strong>{{ cuentas().totalCuentas }}</strong>
+    <small>Cuentas registradas</small>
+  </div>
+
+  <div class="tarjeta">
+    <span class="titulo">Saldo total</span>
+    <strong>S/ {{ cuentas().saldoTotal | number:'1.2-2' }}</strong>
+    <small>Saldo bancario</small>
+  </div>
+
+</section>
+
+<!-- USUARIOS POR ROL -->
+<section class="panel">
+
+  <h2>Usuarios por rol</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rol</th>
+        <th>Total</th>
+        <th>Activos</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (u of usuarios(); track u.rol) {
+        <tr>
+          <td>{{ u.rol }}</td>
+          <td>{{ u.total }}</td>
+          <td>{{ u.activos }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+</section>
+
+<!-- TRANSACCIONES -->
+<section class="panel">
+
+  <h2>Transacciones por tipo</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Cantidad</th>
+        <th>Monto total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (t of transacciones(); track t.tipo) {
+        <tr>
+          <td>{{ t.tipo }}</td>
+          <td>{{ t.cantidad }}</td>
+          <td>S/ {{ t.montoTotal | number:'1.2-2' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+</section>
+

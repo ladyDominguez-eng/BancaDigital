@@ -4,6 +4,7 @@ import { Login } from './login/login';
 import { PanelAdmin } from './admin/panel-admin/panel-admin';
 import { Usuarios } from './admin/usuarios/usuarios';
 import { Parametros } from './admin/parametros/parametros';
+import { Informes } from './admin/informes/informes';
 
 export const routes: Routes = [
 
@@ -17,7 +18,9 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' },
       { path: 'usuarios', component: Usuarios },
-      { path: 'parametros', component: Parametros }
+      { path: 'parametros', component: Parametros },
+      { path: 'informes', component: Informes }
+    
     ]
   }
 

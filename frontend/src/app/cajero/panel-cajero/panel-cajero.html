@@ -1,0 +1,27 @@
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="logo" aria-hidden="true">
+      <span class="logo-inner"></span>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">Banca Digital</span>
+      <span class="brand-role">• Cajero</span>
+    </div>
+  </div>
+
+  <nav class="topbar-nav">
+    <a routerLink="/cajero/cuentas" routerLinkActive="active" class="nav-link">
+      Cuentas
+    </a>
+
+    <a routerLink="/cajero/depositos" routerLinkActive="active" class="nav-link">
+      Depósitos
+    </a>
+  </nav>
+
+  <button type="button" class="btn-salir" (click)="salir()">Salir</button>
+</header>
+
+<main class="content">
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,46 @@
+<h1 class="page-title">Consultar cuentas</h1>
+
+@if (mensaje()) {
+  <p class="aviso" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<section class="panel caja">
+  <div class="filtros">
+    <div class="field">
+      <label for="dni">DNI del cliente</label>
+      <input id="dni" type="text" [(ngModel)]="dni" placeholder="Ej: 70123456">
+    </div>
+
+    <div class="field">
+      <label for="numero">Número de cuenta</label>
+      <input id="numero" type="text" [(ngModel)]="numero" placeholder="Ej: 001-0000010">
+    </div>
+
+    <button type="button" class="btn" (click)="buscar()">Buscar</button>
+    <button type="button" class="btn secundario" (click)="limpiar()">Limpiar</button>
+  </div>
+</section>
+
+<section class="panel caja">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Número</th><th>Titular</th><th>DNI</th><th>Tipo</th>
+        <th>Saldo</th><th>Disponible</th><th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of cuentas(); track c.id) {
+        <tr>
+          <td>{{ c.numero }}</td>
+          <td>{{ c.titular }}</td>
+          <td>{{ c.dni }}</td>
+          <td>{{ c.tipo }}</td>
+          <td>S/ {{ c.saldo | number:'1.2-2' }}</td>
+          <td>S/ {{ c.saldoDisponible | number:'1.2-2' }}</td>
+          <td>{{ c.estado }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

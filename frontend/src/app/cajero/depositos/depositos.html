@@ -1,0 +1,21 @@
+<h1 class="page-title">Registrar depósitos</h1>
+
+@if (mensaje()) {
+  <p class="aviso" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<section class="panel caja">
+  <div class="formulario">
+    <div class="field">
+      <label for="cuenta">Número de cuenta</label>
+      <input id="cuenta" type="text" [(ngModel)]="numeroCuenta" placeholder="Ej: 001-0000010">
+    </div>
+
+    <div class="field">
+      <label for="monto">Monto (S/)</label>
+      <input id="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="0.00">
+    </div>
+
+    <button type="button" class="btn" (click)="depositar()">Depositar</button>
+  </div>
+</section>

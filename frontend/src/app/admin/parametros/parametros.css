@@ -1,0 +1,8 @@
+.page-title { color: #1d4ed8; font-family: 'Segoe UI', Arial, sans-serif; }
+.tabla { width: 100%; border-collapse: collapse; font-family: 'Segoe UI', Arial, sans-serif; }
+th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+th { background: #eff6ff; }
+input { padding: 8px; border: 1px solid #a5b4fc; border-radius: 6px; width: 120px; }
+button { padding: 8px 14px; border: none; border-radius: 6px; background: #2563eb; color: #fff; cursor: pointer; }
+.aviso { color: #15803d; font-weight: 600; }
+.aviso.error { color: #b91c1c; }

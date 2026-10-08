@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -8,13 +10,19 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login.css'
 })
 export class Login {
+  private router = inject(Router);
+  private http = inject(HttpClient);
+
   roles = [
     { valor: 'ADMIN',   texto: 'Administrador' },
     { valor: 'CLIENTE', texto: 'Cliente' },
     { valor: 'ASESOR',  texto: 'Asesor de Crédito' },
     { valor: 'CAJERO',  texto: 'Cajero' },
-    { valor: 'AUDITOR', texto: 'Auditor' },
   ];
+
+  private rutas: Record<string, string> = {
+    ADMIN: '/admin', CLIENTE: '/cliente', ASESOR: '/asesor', CAJERO: '/cajero',
+  };
 
   rol = '';
   username = '';
@@ -26,7 +34,19 @@ export class Login {
       this.mensaje = 'Completa todos los campos.';
       return;
     }
-    this.mensaje = '';
-    console.log(this.rol, this.username);
+    this.http.post('http://localhost:8080/api/login', {
+  username: this.username,
+  password: this.password,
+  rol: this.rol
+}).subscribe({
+  next: (respuesta) => {
+    console.log('✅ LOGIN CORRECTO:', respuesta);
+    console.log('➡️ ROL:', this.rol);
+    console.log('➡️ RUTA:', this.rutas[this.rol]);
+
+    this.router.navigate([this.rutas[this.rol]]);
+  },
+  error: e => this.mensaje = e.error?.error ?? 'No se pudo conectar con el servidor.'
+});
   }
 }

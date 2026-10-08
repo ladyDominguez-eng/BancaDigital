@@ -11,7 +11,9 @@ export interface Usuario {
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
+
   private http = inject(HttpClient);
+
   private url = 'http://localhost:8080/api/usuarios';
 
   listar(): Observable<Usuario[]> {
@@ -29,4 +31,7 @@ export class UsuarioService {
   cambiarEstado(id: number, activo: boolean): Observable<any> {
     return this.http.put(`${this.url}/${id}/estado`, { activo });
   }
+  eliminar(id: number): Observable<boolean> {
+  return this.http.delete<boolean>(`${this.url}/${id}`);
+}
 }

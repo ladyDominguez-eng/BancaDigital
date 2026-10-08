@@ -14,7 +14,7 @@ public class ConexionBD {
         try {
             String url = "jdbc:postgresql://localhost:5432/Banca_BD";
             String usuario = "postgres";
-            String clave = "system"; 
+            String clave = "aaa"; 
 
             conexion = DriverManager.getConnection(url, usuario, clave);
             System.out.println("Conexión establecida con PostgreSQL");

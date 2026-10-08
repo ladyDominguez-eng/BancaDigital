@@ -11,7 +11,7 @@ export class LoginComponent {
   rol: string = '';
 
   login() {
-    alert(`Bienvenido ${this.rol} ${this.usuario} a BancaDigital ✨`);
+    alert(`Bienvenido ${this.rol} ${this.usuario} a BancaDigital`);
   }
 }
 

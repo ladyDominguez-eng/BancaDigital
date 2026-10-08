@@ -1,0 +1,47 @@
+<h1 class="page-title">Configurar parámetros</h1>
+
+@if (mensaje) {
+  <p class="aviso" [class.error]="esError">{{ mensaje }}</p>
+}
+
+<section class="panel table-panel">
+
+  <table class="tabla">
+
+    <thead>
+      <tr>
+        <th>Parámetro</th>
+        <th>Descripción</th>
+        <th>Valor</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (p of parametros; track p.id) {
+        <tr>
+          <td>{{ p.nombre }}</td>
+
+          <td>{{ p.descripcion }}</td>
+
+          <td>
+            <input
+              type="text"
+              [(ngModel)]="p.valor"
+              [name]="'valor' + p.id">
+          </td>
+
+          <td>
+            <button
+              type="button"
+              (click)="guardar(p)">
+              Guardar
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+
+  </table>
+
+</section>

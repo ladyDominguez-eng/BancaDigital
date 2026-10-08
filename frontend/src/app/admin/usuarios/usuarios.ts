@@ -17,14 +17,20 @@ export class Usuarios implements OnInit {
   mensaje = '';
   esError = false;
 
-  ngOnInit() { this.cargar(); }
+ ngOnInit() {
+  this.cargar();
+}
 
-  cargar() {
-    this.servicio.listar().subscribe({
-      next: lista => this.usuarios = lista,
-      error: () => this.avisar('No se pudo cargar la lista.', true)
-    });
-  }
+cargar() {
+  this.servicio.listar().subscribe({
+    next: lista => {
+      console.log('USUARIOS RECIBIDOS:', lista);
+      this.usuarios = [...lista];
+    },
+    error: () => this.avisar('No se pudo cargar la lista.', true)
+  });
+
+}
 
   crear() {
     this.servicio.crear(this.nuevo.username, this.nuevo.password, this.nuevo.rol).subscribe({
@@ -44,12 +50,15 @@ export class Usuarios implements OnInit {
     });
   }
 
-  alternarEstado(u: Usuario) {
-    this.servicio.cambiarEstado(u.id, !u.activo).subscribe({
-      next: () => { u.activo = !u.activo; this.avisar('Estado actualizado.', false); },
-      error: e => this.avisar(e.error?.error ?? 'Error.', true)
-    });
-  }
+  eliminar(id: number) {
+  this.servicio.eliminar(id).subscribe({
+    next: () => {
+      this.avisar('Usuario eliminado.', false);
+      this.cargar();
+    },
+    error: e => this.avisar(e.error?.error ?? 'Error al eliminar.', true)
+  });
+}
 
   private avisar(texto: string, error: boolean) {
     this.mensaje = texto;

@@ -8,7 +8,7 @@ public class Usuario {
     private boolean activo;
 
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public void setId(long id) { this.id = (int) id; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }

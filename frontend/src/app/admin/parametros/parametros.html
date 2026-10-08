@@ -1,7 +1,7 @@
 <h1 class="page-title">Configurar parámetros</h1>
 
-@if (mensaje) {
-  <p class="aviso" [class.error]="esError">{{ mensaje }}</p>
+@if (mensaje()) {
+  <p class="aviso" [class.error]="esError()">{{ mensaje() }}</p>
 }
 
 <section class="panel table-panel">
@@ -18,7 +18,7 @@
     </thead>
 
     <tbody>
-      @for (p of parametros; track p.id) {
+      @for (p of parametros(); track p.id) {
         <tr>
           <td>{{ p.nombre }}</td>
 

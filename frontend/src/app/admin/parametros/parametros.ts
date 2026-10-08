@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ParametroService, Parametro } from '../../services/parametro';
 
@@ -12,9 +12,9 @@ export class Parametros implements OnInit {
 
   private servicio = inject(ParametroService);
 
-  parametros: Parametro[] = [];
-  mensaje = '';
-  esError = false;
+  parametros= signal<Parametro[]>([]);
+  mensaje = signal('');
+  esError = signal(false);
 
   ngOnInit() {
     this.cargar();
@@ -22,14 +22,8 @@ export class Parametros implements OnInit {
 
   cargar() {
     this.servicio.listar().subscribe({
-      next: lista => {
-        console.log('DATOS RECIBIDOS:', lista);
-        this.parametros = lista;
-      },
-      error: error => {
-        console.error('ERROR:', error);
-        this.avisar('No se pudo cargar la lista.', true);
-      }
+      next: lista => this.parametros.set(lista),   // CAMBIO
+      error: () => this.avisar('No se pudo cargar la lista.', true)
     });
   }
 
@@ -44,7 +38,7 @@ export class Parametros implements OnInit {
   }
 
   private avisar(texto: string, error: boolean) {
-    this.mensaje = texto;
-    this.esError = error;
+    this.mensaje.set(texto);
+    this.esError.set(error);
   }
 }

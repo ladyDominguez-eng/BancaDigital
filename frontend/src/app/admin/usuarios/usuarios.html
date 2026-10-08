@@ -1,54 +1,123 @@
 <h1 class="page-title">Gestionar usuarios</h1>
 
 @if (mensaje) {
+
   <p class="aviso" [class.error]="esError">{{ mensaje }}</p>
+
 }
 
 <section class="panel form-panel">
+
   <div class="create-form">
+
     <div class="field">
+
       <label for="usuario">Usuario</label>
-      <input type="text" id="usuario" [(ngModel)]="nuevo.username" placeholder="Nombre de usuario">
+
+      <input
+        type="text"
+        id="usuario"
+        [(ngModel)]="nuevo.username"
+        placeholder="Nombre de usuario">
+
     </div>
 
     <div class="field">
+
       <label for="password">Contraseña</label>
-      <input type="password" id="password" [(ngModel)]="nuevo.password" placeholder="Contraseña">
+
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="nuevo.password"
+        placeholder="Contraseña">
+
     </div>
 
     <div class="field">
+
       <label for="rol">Rol</label>
-      <select id="rol" [(ngModel)]="nuevo.rol">
+
+      <select
+        id="rol"
+        [(ngModel)]="nuevo.rol">
+
         <option value="">Selecciona un rol</option>
-        @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
+
+        @for (r of roles; track r) {
+          <option [value]="r">{{ r }}</option>
+        }
+
       </select>
+
     </div>
 
-    <button type="button" class="btn-crear" (click)="crear()">Crear usuario</button>
+    <button
+      type="button"
+      class="btn-crear"
+      (click)="crear()">
+      Crear usuario
+    </button>
+
   </div>
+
 </section>
 
 <section class="panel table-panel">
+
   <table class="users-table">
+
     <thead>
-      <tr><th>ID</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acción</th></tr>
+
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acción</th>
+      </tr>
+
     </thead>
+
     <tbody>
+
       @for (u of usuarios; track u.id) {
+
         <tr>
+
           <td data-label="ID">{{ u.id }}</td>
+
           <td data-label="Usuario">{{ u.username }}</td>
+
           <td data-label="Rol">{{ u.rol }}</td>
+
           <td data-label="Estado">
-            <span class="badge" [class.activo]="u.activo">{{ u.activo ? 'Activo' : 'Inactivo' }}</span>
+
+            <span
+              class="badge"
+              [class.activo]="u.activo">
+              {{ u.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+
           </td>
+
           <td data-label="Acción">
-            <button type="button" class="btn-accion" (click)="eliminar(u.id)">
-              Eliminar
+
+            <button
+              type="button"
+              class="btn-accion"
+              (click)="cambiarEstado(u)">
+              {{ u.activo ? 'Desactivar' : 'Activar' }}
             </button>
+
           </td>
+
         </tr>
+
       }
+
     </tbody>
+
   </table>
+
 </section>

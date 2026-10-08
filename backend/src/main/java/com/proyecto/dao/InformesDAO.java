@@ -24,6 +24,7 @@ public class InformesDAO {
                 COUNT(*) AS total,
                 SUM(CASE WHEN activo = true THEN 1 ELSE 0 END) AS activos
             FROM usuario
+            WHERE activo = true
             GROUP BY rol
             ORDER BY rol
             """;

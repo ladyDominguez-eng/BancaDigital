@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.proyecto.dao.UsuarioDAO;
 import com.proyecto.model.Usuario;
+import com.proyecto.patterns.AuditoriaPublisher;
+import com.proyecto.patterns.EventoAuditoria;
 
 @Service
 public class UsuarioService {
@@ -28,9 +30,21 @@ public class UsuarioService {
     System.out.println("🔐 Password correcta: " +
             passwordEncoder.matches(password, usuario.getPasswordHash()));
 
-    return passwordEncoder.matches(password, usuario.getPasswordHash()) &&
-           usuario.getRol().equalsIgnoreCase(rol) &&
-           usuario.isActivo();
+    boolean valido =
+        passwordEncoder.matches(password, usuario.getPasswordHash()) &&
+        usuario.getRol().equalsIgnoreCase(rol) &&
+        usuario.isActivo();
+
+if (valido) {
+    AuditoriaPublisher.getInstancia().publicar(
+        new EventoAuditoria(
+            usuario.getId(),
+            "INICIO_SESION"
+        )
+    );
+}
+
+return valido;
 }
     public Usuario crearUsuario(String username, String password, String rol) {
     Usuario usuario = new Usuario();
@@ -40,9 +54,22 @@ public class UsuarioService {
     usuario.setRol(rol);
     usuario.setActivo(true);
 
-    return usuarioDAO.crear(usuario);
+    Usuario creado = usuarioDAO.crear(usuario);
+
+if (creado != null) {
+    AuditoriaPublisher.getInstancia().publicar(
+        new EventoAuditoria(
+            creado.getId(),
+            "CREO_USUARIO"
+        )
+    );
 }
-public boolean eliminarUsuario(Long id) {
-    return usuarioDAO.eliminar(id);
+
+return creado;
 }
+public boolean cambiarEstado(Long id, boolean activo) {
+
+    return usuarioDAO.cambiarEstado(id, activo);
+}
+
 }

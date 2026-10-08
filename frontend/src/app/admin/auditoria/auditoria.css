@@ -1,0 +1,75 @@
+.page-title {
+  margin-bottom: 24px;
+}
+
+.panel {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.filtros {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filtros div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtros label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.filtros input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filtros button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #111827;
+  color: white;
+  font-weight: 600;
+}
+
+.filtros .btn-secundario {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-weight: 600;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}

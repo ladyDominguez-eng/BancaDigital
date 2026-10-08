@@ -93,18 +93,23 @@ public class UsuarioDAO {
 
     return null;
 }
-public boolean eliminar(Long id) {
-    String sql = "DELETE FROM usuario WHERE id = ?";
+public boolean cambiarEstado(Long id, boolean activo) {
+
+    String sql = "UPDATE usuario SET activo = ? WHERE id = ?";
 
     try {
+
         PreparedStatement ps = conexion.prepareStatement(sql);
-        ps.setLong(1, id);
+
+        ps.setBoolean(1, activo);
+        ps.setLong(2, id);
 
         int filas = ps.executeUpdate();
 
         return filas > 0;
 
     } catch (SQLException e) {
+
         e.printStackTrace();
         return false;
     }

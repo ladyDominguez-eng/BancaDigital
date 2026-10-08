@@ -50,13 +50,22 @@ cargar() {
     });
   }
 
-  eliminar(id: number) {
-  this.servicio.eliminar(id).subscribe({
+  cambiarEstado(u: Usuario) {
+
+  const nuevoEstado = !u.activo;
+
+  this.servicio.cambiarEstado(u.id, nuevoEstado).subscribe({
     next: () => {
-      this.avisar('Usuario eliminado.', false);
+      this.avisar(
+        nuevoEstado ? 'Usuario activado.' : 'Usuario desactivado.',
+        false
+      );
       this.cargar();
     },
-    error: e => this.avisar(e.error?.error ?? 'Error al eliminar.', true)
+    error: e => this.avisar(
+      e.error?.error ?? 'Error al cambiar el estado.',
+      true
+    )
   });
 }
 

@@ -2,7 +2,7 @@
 
 Sistema web integral de **Banca Digital** desarrollado para el curso de **Diseño y Patrones de Software**. La aplicación implementa una arquitectura desacoplada basada en capas, principios SOLID y patrones de diseño GoF y GRASP.
 
----
+
 
 ## 👥 Actores del Sistema y Roles
 
@@ -29,7 +29,6 @@ El sistema cuenta con 5 actores, cada uno con responsabilidades y paneles espec�
    - Monitoreo de bitácora de seguridad y eventos de riesgo.
    - Exportación de información y análisis de transacciones.
 
----
 
 ## 📐 Patrones de Diseño Aplicados
 
@@ -37,7 +36,6 @@ El sistema cuenta con 5 actores, cada uno con responsabilidades y paneles espec�
 - **Data Access Object - DAO (Estructural / Persistencia)**: Clases como `UsuarioDAO`, `ParametroDAO`, `BitacoraDAO` e `InformesDAO` que aíslan las consultas SQL de la lógica de negocio.
 - **Observer (Comportamiento)**: Implementado en el paquete [`patterns`](backend/src/main/java/com/proyecto/patterns/) (`AuditoriaPublisher`, `AuditoriaObserver`, `EventoAuditoria`) para registrar automáticamente en la bitácora cada inicio de sesión, creación de usuarios y operaciones críticas sin acoplar los servicios.
 
----
 
 ## 🗄️ Base de Datos (PostgreSQL)
 
@@ -87,7 +85,7 @@ npm start
 ```
 La aplicación web estará disponible en el navegador en: `http://localhost:4200`.
 
----
+
 
 ## 📁 Estructura del Proyecto
 

@@ -8,6 +8,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
   styleUrl: './panel-admin.css'
 })
 
+
 export class PanelAdmin {
   private router = inject(Router);
 

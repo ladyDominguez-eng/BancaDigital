@@ -1,10 +1,10 @@
-# Proyecto Banca Digital 🏦
+# Proyecto Banca Digital 
 
 Sistema web integral de **Banca Digital** desarrollado para el curso de **Diseño y Patrones de Software**. La aplicación implementa una arquitectura desacoplada basada en capas, principios SOLID y patrones de diseño GoF y GRASP.
 
 
 
-## 👥 Actores del Sistema y Roles
+##  Actores del Sistema y Roles
 
 El sistema cuenta con 5 actores, cada uno con responsabilidades y paneles específicos:
 
@@ -30,14 +30,14 @@ El sistema cuenta con 5 actores, cada uno con responsabilidades y paneles espec�
    - Exportación de información y análisis de transacciones.
 
 
-## 📐 Patrones de Diseño Aplicados
+##  Patrones de Diseño Aplicados
 
 - **Singleton (Creacional)**: Implementado en [`ConexionBD`](backend/src/main/java/com/proyecto/util/ConexionBD.java) para centralizar y garantizar una única instancia de conexión JDBC a PostgreSQL.
 - **Data Access Object - DAO (Estructural / Persistencia)**: Clases como `UsuarioDAO`, `ParametroDAO`, `BitacoraDAO` e `InformesDAO` que aíslan las consultas SQL de la lógica de negocio.
 - **Observer (Comportamiento)**: Implementado en el paquete [`patterns`](backend/src/main/java/com/proyecto/patterns/) (`AuditoriaPublisher`, `AuditoriaObserver`, `EventoAuditoria`) para registrar automáticamente en la bitácora cada inicio de sesión, creación de usuarios y operaciones críticas sin acoplar los servicios.
 
 
-## 🗄️ Base de Datos (PostgreSQL)
+## 🗄 Base de Datos (PostgreSQL)
 
 Para que cualquier integrante del equipo monte la base de datos en su computadora en menos de 2 minutos:
 
@@ -49,11 +49,11 @@ CREATE DATABASE banca_bd;
 
 ### Paso 2: Ejecutar el Script de Estructura y Datos
 Ejecuta el archivo ubicado en:
-📁 **[`database/schema.sql`](database/schema.sql)**
+ **[`database/schema.sql`](database/schema.sql)**
 
 > **En pgAdmin:** Abre la herramienta de consulta (*Query Tool*) sobre `banca_bd`, abre el archivo `database/schema.sql` y presiona **F5** (Ejecutar).
 
-### 🔑 Usuarios y Credenciales de Prueba
+### Usuarios y Credenciales de Prueba
 Todos los usuarios iniciales tienen la contraseña: **`123456`**
 
 | Usuario | Rol | Contraseña |
@@ -64,9 +64,9 @@ Todos los usuarios iniciales tienen la contraseña: **`123456`**
 | `asesor1` | Asesor de Crédito | `123456` |
 | `auditor1` | Auditor | `123456` |
 
----
 
-## 🚀 Cómo Ejecutar el Proyecto
+
+## Cómo Ejecutar el Proyecto
 
 ### 1. Backend (Spring Boot + Java 17+)
 Abre una terminal en la carpeta `backend`:
@@ -87,7 +87,7 @@ La aplicación web estará disponible en el navegador en: `http://localhost:4200
 
 
 
-## 📁 Estructura del Proyecto
+Estructura del Proyecto
 
 ```text
 BancaDigital/

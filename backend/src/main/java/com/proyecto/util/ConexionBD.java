@@ -12,9 +12,9 @@ public class ConexionBD {
     // Constructor privado
     private ConexionBD() {
         try {
-            String url = "jdbc:postgresql://localhost:5432/Banca_BD";
-            String usuario = "postgres";
-            String clave = "aaa"; 
+            String url = "jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:6543/postgres";
+            String usuario ="postgres.lnpbnmbxfychecnmhdue";
+            String clave = System.getenv("BancaDigitalproyectoutp");; 
 
             conexion = DriverManager.getConnection(url, usuario, clave);
             System.out.println("Conexión establecida con PostgreSQL");

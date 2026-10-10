@@ -22,10 +22,11 @@ public class loginController {
     private UsuarioService usuarioService;
 
     @PostMapping("/login")
+    //convierte el json en un objeto UsuarioRequest
     public ResponseEntity<?> login(@RequestBody UsuarioRequest request) {
         
         System.out.println("🔥 LLEGÓ AL LOGIN: " + request.getUsername());
-        
+        // Aquí llegan los datos enviados desde el frontend:
         boolean valido = usuarioService.validarUsuario(
             request.getUsername(),
             request.getPassword(),

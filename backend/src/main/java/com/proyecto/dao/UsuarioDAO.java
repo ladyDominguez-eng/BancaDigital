@@ -93,26 +93,23 @@ public class UsuarioDAO {
 
     return null;
 }
-public boolean cambiarEstado(Long id, boolean activo) {
+// 🔄 Cambiar estado (activar/desactivar)
+    public boolean cambiarEstado(Long id, boolean activo) {
+        String sql = "UPDATE usuario SET activo = ? WHERE id = ?";
 
-    String sql = "UPDATE usuario SET activo = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setBoolean(1, activo); // 🟢 Nuevo estado
+            ps.setLong(2, id);        // 🆔 ID del usuario
 
-    try {
+            int filas = ps.executeUpdate(); // 📌 Ejecuta actualización
 
-        PreparedStatement ps = conexion.prepareStatement(sql);
+            return filas > 0; // ✅ True si se actualizó al menos una fila
 
-        ps.setBoolean(1, activo);
-        ps.setLong(2, id);
-
-        int filas = ps.executeUpdate();
-
-        return filas > 0;
-
-    } catch (SQLException e) {
-
-        e.printStackTrace();
-        return false;
+        } catch (SQLException e) {
+            e.printStackTrace(); // ⚠️ Error SQL
+            return false;
+        }
     }
-}
 
 }

@@ -29,13 +29,14 @@ public class UsuarioService {
     System.out.println("🟢 Activo: " + usuario.isActivo());
     System.out.println("🔐 Password correcta: " +
             passwordEncoder.matches(password, usuario.getPasswordHash()));
-
+// Verifica:
     boolean valido =
         passwordEncoder.matches(password, usuario.getPasswordHash()) &&
         usuario.getRol().equalsIgnoreCase(rol) &&
         usuario.isActivo();
 
 if (valido) {
+        // Auditoría: registra evento de inicio de sesión
     AuditoriaPublisher.getInstancia().publicar(
         new EventoAuditoria(
             usuario.getId(),
@@ -46,6 +47,7 @@ if (valido) {
 
 return valido;
 }
+// Crear nuevo usuario
     public Usuario crearUsuario(String username, String password, String rol) {
     Usuario usuario = new Usuario();
 
@@ -57,6 +59,7 @@ return valido;
     Usuario creado = usuarioDAO.crear(usuario);
 
 if (creado != null) {
+    // Auditoría: registra evento de creación de usuario
     AuditoriaPublisher.getInstancia().publicar(
         new EventoAuditoria(
             creado.getId(),
@@ -67,8 +70,9 @@ if (creado != null) {
 
 return creado;
 }
+// Cambiar estado de usuario (activar/desactivar)
 public boolean cambiarEstado(Long id, boolean activo) {
-
+    // Actualiza estado en BD según ID
     return usuarioDAO.cambiarEstado(id, activo);
 }
 

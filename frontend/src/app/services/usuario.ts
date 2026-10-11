@@ -13,7 +13,7 @@ export interface Usuario {
 export class UsuarioService {
 
   private http = inject(HttpClient);
-private url = 'https://bancadigital-8oq5.onrender.com/api/usuarios';
+private url = 'https://bancadigital-1.onrender.com/api/usuarios';
 
   listar(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.url);

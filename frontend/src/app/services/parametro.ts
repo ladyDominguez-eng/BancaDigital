@@ -12,7 +12,7 @@ export interface Parametro {
 @Injectable({ providedIn: 'root' })
 export class ParametroService {
   private http = inject(HttpClient);
-  private url = 'https://bancadigital-8oq5.onrender.com/api/parametros';;
+  private url = 'https://bancadigital-1.onrender.com/api/parametros';;
 
   listar(): Observable<Parametro[]> {
     return this.http.get<Parametro[]>(this.url);

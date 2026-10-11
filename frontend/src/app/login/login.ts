@@ -34,7 +34,7 @@ export class Login {
       this.mensaje = 'Completa todos los campos.';
       return;
     }
-    this.http.post('https://bancadigital-8oq5.onrender.com/api/login', {
+    this.http.post('https://bancadigital-1.onrender.com/api/login', {
   username: this.username,
   password: this.password,
   rol: this.rol

@@ -15,7 +15,12 @@ import com.proyecto.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:4200") // Permitir solicitudes desde el frontend
+
+@CrossOrigin(origins = {
+    "http://localhost:4200",
+    "https://bancadigital-frontend.onrender.com"
+})
+ // Permitir solicitudes desde el frontend
 public class loginController {
 
     @Autowired

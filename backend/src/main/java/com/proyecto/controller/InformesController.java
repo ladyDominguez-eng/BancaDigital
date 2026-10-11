@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/informes")
-@CrossOrigin(origins = "http://localhost:4200")
+
+@CrossOrigin(origins = {
+    "http://localhost:4200",
+    "https://bancadigital-frontend.onrender.com"
+})
+
 public class InformesController {
 
     private final InformesService service = new InformesService();

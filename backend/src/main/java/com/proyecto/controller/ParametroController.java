@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/parametros")
-@CrossOrigin(origins = "http://localhost:4200")
+
+@CrossOrigin(origins = {
+    "http://localhost:4200",
+    "https://bancadigital-frontend.onrender.com"
+})
+
 public class ParametroController {
 
     private final ParametroService service = new ParametroService();

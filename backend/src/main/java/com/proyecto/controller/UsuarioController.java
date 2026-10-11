@@ -18,7 +18,12 @@ import java.util.Map;
 
 @RestController // Indica que esta clase es un controlador REST (devuelve JSON)
 @RequestMapping("/api/usuarios") // Define la ruta base para todas las peticiones de usuarios
-@CrossOrigin(origins = "http://localhost:4200") // Permite que el frontend Angular acceda al backend sin errores CORS
+
+@CrossOrigin(origins = {
+    "http://localhost:4200",
+    "https://bancadigital-frontend.onrender.com"
+})
+// Permite que el frontend Angular acceda al backend sin errores CORS
 public class UsuarioController {
 
     // Inyección de dependencias: DAO para acceso a datos y Service para lógica de negocio

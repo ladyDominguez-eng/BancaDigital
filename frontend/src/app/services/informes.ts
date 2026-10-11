@@ -9,7 +9,8 @@ export class InformesService {
 
   private http = inject(HttpClient);
 
-  private url = 'http://localhost:8080/api/informes';
+
+private url = 'https://bancadigital-8oq5.onrender.com/api/informes';
 
   usuariosPorRol(): Observable<any[]> {
     return this.http.get<any[]>(`${this.url}/usuarios`);

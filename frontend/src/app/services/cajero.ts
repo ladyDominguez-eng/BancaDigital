@@ -16,7 +16,7 @@ export interface CuentaDto {
 @Injectable({ providedIn: 'root' })
 export class CajeroService {
   private http = inject(HttpClient);
-  private url = 'http://localhost:8080/api/cajero';
+private url = 'https://bancadigital-8oq5.onrender.com/api/auditoria';
 
   consultar(dni: string, numero: string): Observable<CuentaDto[]> {
     let params = new HttpParams();

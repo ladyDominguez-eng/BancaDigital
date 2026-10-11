@@ -18,7 +18,7 @@ export class AuditoriaService {
 
   private http = inject(HttpClient);
 
-  private url = 'http://localhost:8080/api/auditoria';
+  private url = 'https://bancadigital-8oq5.onrender.com/api/auditoria';
 
   listar(
     usuarioId?: number,

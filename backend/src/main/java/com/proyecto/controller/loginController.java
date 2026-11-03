@@ -20,8 +20,11 @@ public class loginController {
 
     @Autowired
     private UsuarioService usuarioService;
-
+    //define la ruta del enpoint y solo acepta peticiones POST, recibe un objeto JSON con username, password y rol, valida las credenciales y devuelve un objeto JSON indicando si el login fue exitoso o no.
     @PostMapping("/login")
+    //responseEntity<?> es una clase de Spring que representa toda la respuesta HTTP, 
+    // incluyendo el estado, los encabezados y el cuerpo.
+    //  El uso de <?> indica que el tipo de cuerpo de la respuesta puede ser cualquier cosa.
     public ResponseEntity<?> login(@RequestBody UsuarioRequest request) {
 
         System.out.println("🔥 LLEGÓ AL LOGIN: " + request.getUsername());

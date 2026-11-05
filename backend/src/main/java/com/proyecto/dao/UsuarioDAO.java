@@ -87,6 +87,20 @@ public class UsuarioDAO implements IUsuarioDAO {
         }
     }
 
+    // Reemplaza el hash guardado (se usa para fortalecer hashes antiguos)
+    @Override
+    public boolean actualizarPasswordHash(Long id, String nuevoHash) {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                "UPDATE usuario SET password_hash = ? WHERE id = ?")) {
+            ps.setString(1, nuevoHash);
+            ps.setLong(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AccesoDatosException("Error al actualizar la contraseña", e);
+        }
+    }
+
     // Cambiar estado (activar/desactivar)
     @Override
     public boolean cambiarEstado(Long id, boolean activo) {

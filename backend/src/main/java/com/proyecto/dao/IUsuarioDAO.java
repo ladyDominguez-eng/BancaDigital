@@ -21,4 +21,5 @@ public interface IUsuarioDAO {
     List<Usuario> listarTodos();
     Usuario crear(Usuario usuario);
     boolean cambiarEstado(Long id, boolean activo);
+    boolean actualizarPasswordHash(Long id, String nuevoHash);
 }

@@ -3,6 +3,7 @@ package com.proyecto.service;
 import com.proyecto.dao.ICuentaDAO;
 import com.proyecto.dao.factory.DAOFactory;
 import com.proyecto.model.Cuenta;
+import com.proyecto.model.EstadoCuenta;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class CajeroService {
             throw new IllegalArgumentException("La cuenta no existe.");
 
         // VALIDACIÓN: cuenta activa
-        if (!"ACTIVA".equals(c.getEstado()))
+        if (!EstadoCuenta.ACTIVA.equals(c.getEstado()))
             throw new IllegalArgumentException(
                     "La cuenta no está activa.");
 

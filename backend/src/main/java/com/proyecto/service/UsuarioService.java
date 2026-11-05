@@ -27,17 +27,13 @@ public class UsuarioService {
 
     Usuario usuario = usuarioDAO.buscarPorUsername(username);
 
-    System.out.println("👤 Usuario encontrado: " + (usuario != null));
-
+    // Se eliminaron los System.out de depuración: imprimían si la contraseña
+    // era correcta y el rol real del usuario, información útil para un
+    // atacante que lea los registros del servidor.
     if (usuario == null) {
         return false;
     }
 
-    System.out.println("🎭 Rol BD: " + usuario.getRol());
-    System.out.println("🎭 Rol recibido: " + rol);
-    System.out.println("🟢 Activo: " + usuario.isActivo());
-    System.out.println("🔐 Password correcta: " +
-            passwordEncoder.matches(password, usuario.getPasswordHash()));
 // Verifica:
     boolean valido =
         passwordEncoder.matches(password, usuario.getPasswordHash()) &&

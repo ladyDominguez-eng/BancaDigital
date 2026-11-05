@@ -1,6 +1,8 @@
 package com.proyecto.controller;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import com.proyecto.service.UsuarioService;
 @CrossOrigin(origins = "*") // CAMBIO: permite cualquier origen (luego puedes poner la URL exacta del frontend)
 public class loginController {
 
+    private static final Logger log = LoggerFactory.getLogger(loginController.class);
+
     @Autowired
     private UsuarioService usuarioService;
     //define la ruta del enpoint y solo acepta peticiones POST, recibe un objeto JSON con username, password y rol, valida las credenciales y devuelve un objeto JSON indicando si el login fue exitoso o no.
@@ -27,7 +31,8 @@ public class loginController {
     //  El uso de <?> indica que el tipo de cuerpo de la respuesta puede ser cualquier cosa.
     public ResponseEntity<?> login(@RequestBody UsuarioRequest request) {
 
-        System.out.println("🔥 LLEGÓ AL LOGIN: " + request.getUsername());
+        // Registro con logger (no System.out) y sin datos sensibles
+        log.info("Intento de inicio de sesión del usuario {}", request.getUsername());
 
         boolean valido = usuarioService.validarUsuario(
             request.getUsername(),

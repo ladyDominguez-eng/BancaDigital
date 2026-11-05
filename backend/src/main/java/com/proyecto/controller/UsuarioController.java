@@ -3,7 +3,6 @@ package com.proyecto.controller;
 import com.proyecto.model.Usuario;
 import com.proyecto.service.UsuarioService;
 import com.proyecto.model.CrearUsuarioRequest;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,12 +16,7 @@ import java.util.Map;
 
 @RestController // Indica que esta clase es un controlador REST (devuelve JSON)
 @RequestMapping("/api/usuarios") // Define la ruta base para todas las peticiones de usuarios
-
-@CrossOrigin(origins = {
-    "http://localhost:4200",
-    "https://bancadigital-frontend.onrender.com"
-})
-// Permite que el frontend Angular acceda al backend sin errores CORS
+// CORS: ya no se declara aquí, lo aplica CorsConfig a toda la API
 public class UsuarioController {
 
     // GRASP Controlador: solo coordina; la lógica y el acceso a datos

@@ -3,6 +3,7 @@ package com.proyecto.config;
 import com.proyecto.dao.ICuentaDAO;
 import com.proyecto.dao.IClienteDAO;
 import com.proyecto.dao.IParametroDAO;
+import com.proyecto.dao.ISolicitudCreditoDAO;
 import com.proyecto.dao.ITransaccionDAO;
 import com.proyecto.dao.factory.DAOFactory;
 import com.proyecto.patterns.AuditoriaPublisher;
@@ -35,6 +36,11 @@ public class DaoConfig {
     @Bean
     public IClienteDAO clienteDAO() {
         return DAOFactory.crearClienteDAO();
+    }
+
+    @Bean
+    public ISolicitudCreditoDAO solicitudCreditoDAO() {
+        return DAOFactory.crearSolicitudCreditoDAO();
     }
 
     @Bean

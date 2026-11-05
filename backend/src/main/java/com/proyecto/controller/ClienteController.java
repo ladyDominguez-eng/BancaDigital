@@ -2,6 +2,7 @@ package com.proyecto.controller;
 
 import com.proyecto.model.PagoRequest;
 import com.proyecto.model.ServicioPago;
+import com.proyecto.model.SolicitudCreditoRequest;
 import com.proyecto.model.TransferenciaRequest;
 import com.proyecto.seguridad.AuthInterceptor;
 import com.proyecto.seguridad.Sesion;
@@ -56,6 +57,19 @@ public class ClienteController {
                 .map(s -> Map.of("codigo", s.name(), "nombre", s.getNombre()))
                 .toList();
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/creditos")
+    public ResponseEntity<?> misCreditos(
+            @RequestAttribute(AuthInterceptor.ATRIBUTO_SESION) Sesion sesion) throws SQLException {
+        return ResponseEntity.ok(fachada.misSolicitudes(sesion));
+    }
+
+    @PostMapping("/creditos")
+    public ResponseEntity<?> solicitarCredito(
+            @RequestAttribute(AuthInterceptor.ATRIBUTO_SESION) Sesion sesion,
+            @RequestBody SolicitudCreditoRequest request) throws SQLException {
+        return ResponseEntity.ok(fachada.solicitarCredito(sesion, request));
     }
 
     @PostMapping("/pagos")

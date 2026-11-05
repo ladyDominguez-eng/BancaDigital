@@ -3,6 +3,8 @@ package com.proyecto.dao.factory;
 import com.proyecto.dao.CuentaDAO;
 import com.proyecto.dao.ICuentaDAO;
 import com.proyecto.dao.ClienteDAO;
+import com.proyecto.dao.ISolicitudCreditoDAO;
+import com.proyecto.dao.SolicitudCreditoDAO;
 import com.proyecto.dao.IClienteDAO;
 import com.proyecto.dao.ITransaccionDAO;
 import com.proyecto.dao.TransaccionDAO;
@@ -64,5 +66,9 @@ public class DAOFactory {
 
     public static IClienteDAO crearClienteDAO() {
         return new ClienteDAO();
+    }
+
+    public static ISolicitudCreditoDAO crearSolicitudCreditoDAO() {
+        return new SolicitudCreditoDAO();
     }
 }

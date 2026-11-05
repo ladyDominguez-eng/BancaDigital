@@ -2,6 +2,8 @@ package com.proyecto.service;
 
 import com.proyecto.model.Cuenta;
 import com.proyecto.model.PagoRequest;
+import com.proyecto.model.SolicitudCredito;
+import com.proyecto.model.SolicitudCreditoRequest;
 import com.proyecto.model.TransaccionVista;
 import com.proyecto.model.TransferenciaRequest;
 import com.proyecto.patterns.AuditoriaPublisher;
@@ -39,12 +41,25 @@ public class SistemaFacade {
     private final TransferenciaService transferenciaService;
     private final AuditoriaPublisher auditoria;
 
+    private final CreditoService creditoService;
+
     public SistemaFacade(ClienteService clienteService,
             TransferenciaService transferenciaService,
+            CreditoService creditoService,
             AuditoriaPublisher auditoria) {
         this.clienteService = clienteService;
         this.transferenciaService = transferenciaService;
+        this.creditoService = creditoService;
         this.auditoria = auditoria;
+    }
+
+    // Crédito: el cliente solicita y consulta; el asesor las gestiona por otro controlador
+    public SolicitudCredito solicitarCredito(Sesion sesion, SolicitudCreditoRequest r) throws SQLException {
+        return creditoService.solicitar(sesion.usuarioId(), r.monto(), r.plazoMeses());
+    }
+
+    public List<SolicitudCredito> misSolicitudes(Sesion sesion) throws SQLException {
+        return creditoService.misSolicitudes(sesion.usuarioId());
     }
 
     public List<Cuenta> misCuentas(Sesion sesion) throws SQLException {

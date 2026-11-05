@@ -10,4 +10,8 @@ public class CuentaCorriente extends Cuenta  {
 
     @Override
     public String getTipo() { return "CORRIENTE"; }
+
+    // Puede quedar en negativo hasta el monto del sobregiro
+    @Override
+    public BigDecimal getSaldoMinimo() { return SOBREGIRO.negate(); }
 }

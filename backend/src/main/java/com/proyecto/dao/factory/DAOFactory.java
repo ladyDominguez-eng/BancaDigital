@@ -2,6 +2,10 @@ package com.proyecto.dao.factory;
 
 import com.proyecto.dao.CuentaDAO;
 import com.proyecto.dao.ICuentaDAO;
+import com.proyecto.dao.ClienteDAO;
+import com.proyecto.dao.IClienteDAO;
+import com.proyecto.dao.ITransaccionDAO;
+import com.proyecto.dao.TransaccionDAO;
 import com.proyecto.dao.IInformesDAO;
 import com.proyecto.dao.IParametroDAO;
 import com.proyecto.dao.IUsuarioDAO;
@@ -51,5 +55,14 @@ public class DAOFactory {
 
     public static IInformesDAO crearInformesDAO() {
         return new InformesDAO();
+    }
+
+    // DAO de los módulos Cliente, Cajero, Asesor y Auditor
+    public static ITransaccionDAO crearTransaccionDAO() {
+        return new TransaccionDAO();
+    }
+
+    public static IClienteDAO crearClienteDAO() {
+        return new ClienteDAO();
     }
 }

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-@Repository 
-public class UsuarioDAO {
+@Repository
+public class UsuarioDAO implements IUsuarioDAO {
 
     private Connection conexion;
 

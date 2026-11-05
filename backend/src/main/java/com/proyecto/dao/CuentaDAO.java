@@ -51,12 +51,15 @@ public class CuentaDAO implements ICuentaDAO {
         return lista;
     }
 
+    /**
+     * Depósito: actualizar el saldo y registrar la transacción deben
+     * ocurrir juntos o ninguno (RNF-03). La transacción (commit/rollback)
+     * la gestiona ConexionBD.ejecutarTransaccion, en vez de repetir aquí
+     * el manejo de autocommit.
+     */
     @Override
-    public synchronized int depositar(String numero, BigDecimal monto) throws SQLException {
-        Connection con = ConexionBD.getInstancia().getConexion();
-        try {
-            con.setAutoCommit(false);
-
+    public int depositar(String numero, BigDecimal monto) throws SQLException {
+        return ConexionBD.getInstancia().ejecutarTransaccion(con -> {
             int cuentaId;
             try (PreparedStatement ps = con.prepareStatement(
                     "UPDATE cuenta SET saldo = saldo + ? WHERE numero = ? AND estado = 'ACTIVA' RETURNING id")) {
@@ -81,13 +84,7 @@ public class CuentaDAO implements ICuentaDAO {
                 }
             }
 
-            con.commit();
             return transaccionId;
-        } catch (SQLException e) {
-            con.rollback();
-            throw e;
-        } finally {
-            con.setAutoCommit(true);
-        }
+        });
     }
 }

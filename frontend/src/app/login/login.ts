@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth';
@@ -29,16 +29,18 @@ export class Login {
   rol = '';
   username = '';
   password = '';
-  mensaje = '';
+  // signal: la app no usa zone.js, y el mensaje se asigna dentro de una respuesta HTTP;
+  // sin signal el aviso de error nunca aparecía en pantalla.
+  mensaje = signal('');
 
   ingresar() {
     if (!this.rol || !this.username || !this.password) {
-      this.mensaje = 'Completa todos los campos.';
+      this.mensaje.set('Completa todos los campos.');
       return;
     }
     this.auth.iniciarSesion(this.username, this.password, this.rol).subscribe({
       next: respuesta => this.router.navigate([this.rutas[respuesta.rol] ?? '/login']),
-      error: e => this.mensaje = e.error?.error ?? 'No se pudo conectar con el servidor.'
+      error: e => this.mensaje.set(e.error?.error ?? 'No se pudo conectar con el servidor.')
     });
   }
 }

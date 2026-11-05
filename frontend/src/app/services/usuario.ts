@@ -10,6 +10,25 @@ export interface Usuario {
   activo: boolean;
 }
 
+/** Datos para dar de alta a un cliente con su primera cuenta. */
+export interface NuevoCliente {
+  username: string;
+  password: string;
+  dni: string;
+  nombres: string;
+  apellidos: string;
+  tipoCuenta: string;
+  saldoInicial: number | null;
+}
+
+export interface ClienteRegistrado {
+  usuarioId: number;
+  clienteId: number;
+  cuentaId: number;
+  numeroCuenta: string;
+  comprobante: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
 
@@ -22,6 +41,10 @@ private url = `${API_URL}/usuarios`;
 
   crear(username: string, password: string, rol: string): Observable<Usuario> {
     return this.http.post<Usuario>(this.url, { username, password, rol });
+  }
+
+  registrarCliente(datos: NuevoCliente): Observable<ClienteRegistrado> {
+    return this.http.post<ClienteRegistrado>(`${this.url}/clientes`, datos);
   }
 
   cambiarRol(id: number, rol: string): Observable<any> {

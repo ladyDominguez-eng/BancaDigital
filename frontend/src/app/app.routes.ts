@@ -5,13 +5,12 @@ import { PanelRol } from './shared/panel-rol/panel-rol';
 
 import { Login } from './login/login';
 
-import { PanelAdmin } from './admin/panel-admin/panel-admin';
 import { Usuarios } from './admin/usuarios/usuarios';
+import { RegistrarCliente } from './admin/registrar-cliente/registrar-cliente';
 import { Parametros } from './admin/parametros/parametros';
 import { Informes } from './admin/informes/informes';
 import { Auditoria } from './admin/auditoria/auditoria';
 
-import { PanelCajero } from './cajero/panel-cajero/panel-cajero';
 import { Cuentas } from './cajero/cuentas/cuentas';
 import { Depositos } from './cajero/depositos/depositos';
 import { Retiros } from './cajero/retiros/retiros';
@@ -41,11 +40,22 @@ export const routes: Routes = [
 
   {
     path: 'admin',
-    component: PanelAdmin,
+    component: PanelRol,
     canActivate: [rolGuard('ADMIN')],
+    data: {
+      titulo: 'Administrador',
+      enlaces: [
+        { ruta: '/admin/usuarios', texto: 'Usuarios' },
+        { ruta: '/admin/clientes', texto: 'Registrar cliente' },
+        { ruta: '/admin/parametros', texto: 'Parámetros' },
+        { ruta: '/admin/informes', texto: 'Informes' },
+        { ruta: '/admin/auditoria', texto: 'Auditoría' },
+      ]
+    },
     children: [
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' },
       { path: 'usuarios', component: Usuarios },
+      { path: 'clientes', component: RegistrarCliente },
       { path: 'parametros', component: Parametros },
       { path: 'informes', component: Informes },
       { path: 'auditoria', component: Auditoria }
@@ -54,8 +64,17 @@ export const routes: Routes = [
 
   {
     path: 'cajero',
-    component: PanelCajero,
+    component: PanelRol,
     canActivate: [rolGuard('CAJERO')],
+    data: {
+      titulo: 'Cajero',
+      enlaces: [
+        { ruta: '/cajero/cuentas', texto: 'Consultar cuentas' },
+        { ruta: '/cajero/depositos', texto: 'Depósitos' },
+        { ruta: '/cajero/retiros', texto: 'Retiros' },
+        { ruta: '/cajero/comprobantes', texto: 'Comprobantes' },
+      ]
+    },
     children: [
       { path: '', redirectTo: 'cuentas', pathMatch: 'full' },
       { path: 'cuentas', component: Cuentas },

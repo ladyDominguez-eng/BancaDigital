@@ -119,8 +119,8 @@
       </div>
 
       <!-- Mensaje de error (antes se guardaba pero nunca se mostraba) -->
-      @if (mensaje) {
-        <p class="login-error" role="alert">{{ mensaje }}</p>
+      @if (mensaje()) {
+        <p class="login-error" role="alert">{{ mensaje() }}</p>
       }
 
       <!-- Botón -->

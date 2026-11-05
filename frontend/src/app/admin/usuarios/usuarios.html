@@ -1,123 +1,84 @@
-<h1 class="page-title">Gestionar usuarios</h1>
+<header class="pagina-cabecera">
+  <h1>Usuarios</h1>
+  <p class="pagina-ayuda">Crea usuarios del personal, cambia su rol y activa o desactiva su acceso. Para dar de alta a un cliente usa la opción «Registrar cliente».</p>
+</header>
 
-@if (mensaje) {
-
-  <p class="aviso" [class.error]="esError">{{ mensaje }}</p>
-
+@if (mensaje()) {
+  <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
 }
 
-<section class="panel form-panel">
-
-  <div class="create-form">
-
-    <div class="field">
-
-      <label for="usuario">Usuario</label>
-
-      <input
-        type="text"
-        id="usuario"
-        [(ngModel)]="nuevo.username"
-        placeholder="Nombre de usuario">
-
+<section class="tarjeta">
+  <h2>Nuevo usuario del personal</h2>
+  <form class="formulario" (ngSubmit)="crear()">
+    <div class="campos">
+      <div class="campo">
+        <label for="usuario">Usuario</label>
+        <input id="usuario" name="usuario" type="text" [(ngModel)]="nuevo.username" maxlength="30" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" [(ngModel)]="nuevo.password" autocomplete="new-password">
+      </div>
+      <div class="campo">
+        <label for="rol">Rol</label>
+        <select id="rol" name="rol" [(ngModel)]="nuevo.rol">
+          <option value="">Selecciona un rol</option>
+          @for (r of roles; track r.valor) {
+            <option [value]="r.valor">{{ r.texto }}</option>
+          }
+        </select>
+      </div>
     </div>
-
-    <div class="field">
-
-      <label for="password">Contraseña</label>
-
-      <input
-        type="password"
-        id="password"
-        [(ngModel)]="nuevo.password"
-        placeholder="Contraseña">
-
+    <div class="acciones">
+      <button type="submit" class="btn">Crear usuario</button>
     </div>
-
-    <div class="field">
-
-      <label for="rol">Rol</label>
-
-      <select
-        id="rol"
-        [(ngModel)]="nuevo.rol">
-
-        <option value="">Selecciona un rol</option>
-
-        @for (r of roles; track r) {
-          <option [value]="r">{{ r }}</option>
-        }
-
-      </select>
-
-    </div>
-
-    <button
-      type="button"
-      class="btn-crear"
-      (click)="crear()">
-      Crear usuario
-    </button>
-
-  </div>
-
+  </form>
 </section>
 
-<section class="panel table-panel">
+<section class="tarjeta">
+  <h2>Usuarios registrados ({{ usuarios().length }})</h2>
 
-  <table class="users-table">
-
-    <thead>
-
-      <tr>
-        <th>ID</th>
-        <th>Usuario</th>
-        <th>Rol</th>
-        <th>Estado</th>
-        <th>Acción</th>
-      </tr>
-
-    </thead>
-
-    <tbody>
-
-      @for (u of usuarios; track u.id) {
-
-        <tr>
-
-          <td data-label="ID">{{ u.id }}</td>
-
-          <td data-label="Usuario">{{ u.username }}</td>
-
-          <td data-label="Rol">{{ u.rol }}</td>
-
-          <td data-label="Estado">
-
-            <span
-              class="badge"
-              [class.activo]="u.activo">
-              {{ u.activo ? 'Activo' : 'Inactivo' }}
-            </span>
-
-          </td>
-
-          <td data-label="Acción">
-
-            <button
-              type="button"
-              class="btn-accion"
-              (click)="cambiarEstado(u)">
-              {{ u.activo ? 'Desactivar' : 'Activar' }}
-            </button>
-
-          </td>
-
-        </tr>
-
-      }
-
-    </tbody>
-
-  </table>
-
+  @if (usuarios().length === 0) {
+    <p class="vacio"><strong>Aún no hay usuarios.</strong>Crea el primero con el formulario de arriba.</p>
+  } @else {
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th class="num" style="width: 64px">ID</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuarios(); track u.id) {
+            <tr>
+              <td class="num">{{ u.id }}</td>
+              <td><strong>{{ u.username }}</strong></td>
+              <td>
+                @if (u.rol === 'CLIENTE') {
+                  Cliente
+                } @else {
+                  <select class="selector-rol" [attr.aria-label]="'Rol de ' + u.username"
+                          [value]="u.rol" (change)="cambiarRol(u, $any($event.target).value)">
+                    @for (r of roles; track r.valor) {
+                      <option [value]="r.valor" [selected]="r.valor === u.rol">{{ r.texto }}</option>
+                    }
+                  </select>
+                }
+              </td>
+              <td><span class="etiqueta" [class.ACTIVO]="u.activo" [class.INACTIVO]="!u.activo">{{ u.activo ? 'Activo' : 'Inactivo' }}</span></td>
+              <td class="num">
+                <button type="button" class="btn secundario chico" (click)="cambiarEstado(u)">
+                  {{ u.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </section>

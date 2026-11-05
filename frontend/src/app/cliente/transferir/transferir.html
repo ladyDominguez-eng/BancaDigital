@@ -1,0 +1,39 @@
+<h1 class="vista-titulo">Transferir</h1>
+
+@if (mensaje()) {
+  <p class="vista-aviso error">{{ mensaje() }}</p>
+}
+
+@if (comprobante(); as t) {
+  <div class="vista-comprobante" role="status">
+    <p class="vista-aviso">Transferencia realizada.</p>
+    <p>Comprobante <strong>{{ t.comprobante }}</strong></p>
+    <p>{{ t.cuentaOrigen }} → {{ t.cuentaDestino }} · S/ {{ t.monto | number:'1.2-2' }}</p>
+    <p>{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+  </div>
+}
+
+<section class="vista-panel">
+  <form class="vista-form" (ngSubmit)="transferir()">
+    <div class="vista-campo">
+      <label for="origen">Desde mi cuenta</label>
+      <select id="origen" name="origen" [(ngModel)]="cuentaOrigenId">
+        @for (c of cuentas(); track c.id) {
+          <option [ngValue]="c.id">{{ c.numero }} · S/ {{ c.saldoDisponible | number:'1.2-2' }} disponibles</option>
+        }
+      </select>
+    </div>
+
+    <div class="vista-campo">
+      <label for="destino">Cuenta de destino</label>
+      <input id="destino" name="destino" type="text" [(ngModel)]="numeroDestino" placeholder="Ej: 001-0000010" autocomplete="off">
+    </div>
+
+    <div class="vista-campo">
+      <label for="monto">Monto (S/)</label>
+      <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="0.00">
+    </div>
+
+    <button type="submit" class="vista-btn" [disabled]="enviando()">Transferir</button>
+  </form>
+</section>

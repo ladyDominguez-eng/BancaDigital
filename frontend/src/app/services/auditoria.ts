@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_URL } from '../config';
 
 export interface Bitacora {
   id: number;
@@ -18,7 +19,7 @@ export class AuditoriaService {
 
   private http = inject(HttpClient);
 
-  private url = 'https://bancadigital-1.onrender.com/api/auditoria';
+  private url = `${API_URL}/auditoria`;
 
   listar(
     usuarioId?: number,

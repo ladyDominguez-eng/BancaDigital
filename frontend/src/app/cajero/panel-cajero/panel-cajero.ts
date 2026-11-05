@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-panel-cajero',
@@ -8,7 +9,8 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
   styleUrl: './panel-cajero.css'
 })
 export class PanelCajero {
-  private router = inject(Router);
+  private auth = inject(AuthService);
 
-  salir() { this.router.navigate(['/login']); }
+  // Cierra la sesión en el servidor (el token deja de valer) y vuelve al login
+  salir() { this.auth.salir(); }
 }

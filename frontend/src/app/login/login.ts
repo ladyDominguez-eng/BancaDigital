@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-login',
@@ -11,17 +11,19 @@ import { HttpClient } from '@angular/common/http';
 })
 export class Login {
   private router = inject(Router);
-  private http = inject(HttpClient);
+  private auth = inject(AuthService);
 
   roles = [
     { valor: 'ADMIN',   texto: 'Administrador' },
     { valor: 'CLIENTE', texto: 'Cliente' },
     { valor: 'ASESOR',  texto: 'Asesor de Crédito' },
     { valor: 'CAJERO',  texto: 'Cajero' },
+    { valor: 'AUDITOR', texto: 'Auditor' },
   ];
 
+  // Pantalla inicial de cada rol
   private rutas: Record<string, string> = {
-    ADMIN: '/admin', CLIENTE: '/cliente', ASESOR: '/asesor', CAJERO: '/cajero',
+    ADMIN: '/admin', CLIENTE: '/cliente', ASESOR: '/asesor', CAJERO: '/cajero', AUDITOR: '/auditor',
   };
 
   rol = '';
@@ -34,19 +36,9 @@ export class Login {
       this.mensaje = 'Completa todos los campos.';
       return;
     }
-    this.http.post('https://bancadigital-1.onrender.com/api/login', {
-  username: this.username,
-  password: this.password,
-  rol: this.rol
-}).subscribe({
-  next: (respuesta) => {
-    console.log('✅ LOGIN CORRECTO:', respuesta);
-    console.log('➡️ ROL:', this.rol);
-    console.log('➡️ RUTA:', this.rutas[this.rol]);
-
-    this.router.navigate([this.rutas[this.rol]]);
-  },
-  error: e => this.mensaje = e.error?.error ?? 'No se pudo conectar con el servidor.'
-});
+    this.auth.iniciarSesion(this.username, this.password, this.rol).subscribe({
+      next: respuesta => this.router.navigate([this.rutas[respuesta.rol] ?? '/login']),
+      error: e => this.mensaje = e.error?.error ?? 'No se pudo conectar con el servidor.'
+    });
   }
 }

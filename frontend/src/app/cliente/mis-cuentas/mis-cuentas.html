@@ -1,0 +1,55 @@
+<h1 class="vista-titulo">Mis cuentas</h1>
+
+@if (mensaje()) {
+  <p class="vista-aviso error">{{ mensaje() }}</p>
+}
+
+@if (cuentas().length === 0 && !mensaje()) {
+  <p class="vista-vacio">No tienes cuentas registradas.</p>
+}
+
+<div class="vista-tarjetas">
+  @for (c of cuentas(); track c.id) {
+    <button type="button" class="vista-tarjeta" [class.activa]="seleccionada()?.id === c.id" (click)="seleccionar(c)">
+      <small>{{ c.tipo }} · {{ c.numero }}</small>
+      <div class="saldo">S/ {{ c.saldo | number:'1.2-2' }}</div>
+      <small>Disponible: S/ {{ c.saldoDisponible | number:'1.2-2' }}</small>
+      <span class="vista-etiqueta" [class]="'vista-etiqueta ' + c.estado">{{ c.estado }}</span>
+    </button>
+  }
+</div>
+
+@if (seleccionada(); as c) {
+  <section class="vista-panel">
+    <h2>Movimientos de la cuenta {{ c.numero }}</h2>
+
+    @if (movimientos().length === 0) {
+      <p class="vista-vacio">Esta cuenta todavía no tiene movimientos.</p>
+    } @else {
+      <div class="vista-tabla-caja">
+        <table class="vista-tabla">
+          <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th class="num">Monto</th><th>Comprobante</th></tr>
+          </thead>
+          <tbody>
+            @for (m of movimientos(); track m.id) {
+              <tr>
+                <td>{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ m.tipo }}</td>
+                <td>
+                  @if (m.cuentaOrigen && m.cuentaDestino) {
+                    {{ m.cuentaOrigen }} → {{ m.cuentaDestino }}
+                  } @else {
+                    {{ m.cuentaOrigen ?? m.cuentaDestino }}
+                  }
+                </td>
+                <td class="num">{{ esSalida(m) ? '−' : '+' }} S/ {{ m.monto | number:'1.2-2' }}</td>
+                <td>{{ m.comprobante }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+}

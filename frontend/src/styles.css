@@ -1,1 +1,150 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+ * Estilos globales compartidos por las pantallas de Cliente, Asesor, Auditor
+ * y las nuevas del Cajero.
+ *
+ * PROBLEMA: cada pantalla repetía las mismas reglas (paneles, formularios,
+ *           botones, tablas) en su propio .css; las nuevas pantallas iban a
+ *           copiarlas otra vez. SOLUCIÓN: se definen una sola vez aquí con
+ *           los mismos colores del tema "vidrio" ya usado en el proyecto.
+ */
+
+:root {
+  --cyan: #4ff0e0;
+  --blue: #1a9fff;
+  --glass-bg: rgba(30, 60, 90, 0.55);
+  --glass-border: rgba(140, 220, 240, 0.28);
+  --text: #eaf6ff;
+  --text-dim: #a8c4d8;
+  --ok: #6ef0a8;
+  --error: #ff8a8a;
+  --aviso: #ffd37a;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(40, 140, 180, 0.35), transparent 55%),
+    radial-gradient(circle at 90% 90%, rgba(30, 90, 140, 0.4), transparent 50%),
+    linear-gradient(165deg, #0a1c2b 0%, #0e2a3f 45%, #061520 100%);
+  background-attachment: fixed;
+}
+
+/* ---------- Contenedores ---------- */
+.vista-titulo {
+  font-size: 2.1rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  margin: 0 0 24px;
+  color: var(--text);
+  text-shadow: 0 0 18px rgba(80, 220, 235, 0.55);
+}
+
+.vista-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.vista-panel h2 {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--cyan);
+}
+
+/* ---------- Formularios ---------- */
+.vista-form { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+.vista-campo { display: flex; flex-direction: column; gap: 6px; min-width: 190px; }
+.vista-campo label { font-size: 0.85rem; color: var(--text-dim); }
+
+.vista-campo input,
+.vista-campo select,
+.vista-campo textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: rgba(10, 30, 50, 0.7);
+  color: var(--text);
+  font: inherit;
+}
+
+.vista-campo input:focus,
+.vista-campo select:focus,
+.vista-campo textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+
+/* ---------- Botones ---------- */
+.vista-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  font: inherit;
+  background: linear-gradient(180deg, #33b1ff, #0d7fe0);
+  box-shadow: 0 4px 14px rgba(20, 150, 230, 0.35);
+}
+.vista-btn:hover:not(:disabled) { filter: brightness(1.12); }
+.vista-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.vista-btn.secundario { background: rgba(120, 220, 240, 0.15); box-shadow: none; border: 1px solid var(--glass-border); }
+.vista-btn.peligro { background: linear-gradient(180deg, #ff7a7a, #d63a3a); box-shadow: none; }
+.vista-btn.chico { padding: 6px 14px; font-size: 0.85rem; }
+
+/* ---------- Mensajes ---------- */
+.vista-aviso { font-weight: 600; margin: 0 0 16px; color: var(--ok); }
+.vista-aviso.error { color: var(--error); }
+
+/* ---------- Tablas ---------- */
+.vista-tabla-caja { overflow-x: auto; }
+.vista-tabla { width: 100%; border-collapse: collapse; }
+.vista-tabla th, .vista-tabla td { padding: 11px 12px; text-align: left; border-bottom: 1px solid rgba(140, 220, 240, 0.15); }
+.vista-tabla th { color: var(--cyan); font-weight: 500; font-size: 0.85rem; white-space: nowrap; }
+.vista-tabla .num { text-align: right; font-variant-numeric: tabular-nums; }
+.vista-vacio { color: var(--text-dim); padding: 14px 0 2px; }
+
+/* ---------- Etiquetas de estado ---------- */
+.vista-etiqueta {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(120, 220, 240, 0.18);
+}
+.vista-etiqueta.PENDIENTE { background: rgba(255, 211, 122, 0.22); color: var(--aviso); }
+.vista-etiqueta.EN_EVALUACION { background: rgba(51, 177, 255, 0.25); color: #8fd3ff; }
+.vista-etiqueta.APROBADO, .vista-etiqueta.ACTIVA { background: rgba(110, 240, 168, 0.22); color: var(--ok); }
+.vista-etiqueta.RECHAZADO, .vista-etiqueta.BLOQUEADA { background: rgba(255, 138, 138, 0.22); color: var(--error); }
+
+/* ---------- Comprobante ---------- */
+.vista-comprobante {
+  border: 1px dashed var(--glass-border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  background: rgba(10, 30, 50, 0.45);
+}
+.vista-comprobante strong { color: var(--cyan); }
+
+/* ---------- Tarjetas de cuenta ---------- */
+.vista-tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.vista-tarjeta {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 18px;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.vista-tarjeta.activa { outline: 2px solid var(--cyan); }
+.vista-tarjeta .saldo { font-size: 1.6rem; font-weight: 300; margin: 8px 0 4px; }
+.vista-tarjeta small { color: var(--text-dim); display: block; }

@@ -56,6 +56,7 @@
           <option value="CLIENTE">Cliente</option>
           <option value="ASESOR">Asesor de Crédito</option>
           <option value="CAJERO">Cajero</option>
+          <option value="AUDITOR">Auditor</option>
         </select>
       </div>
 
@@ -117,6 +118,11 @@
         </div>
       </div>
 
+      <!-- Mensaje de error (antes se guardaba pero nunca se mostraba) -->
+      @if (mensaje) {
+        <p class="login-error" role="alert">{{ mensaje }}</p>
+      }
+
       <!-- Botón -->
       <button type="submit" class="btn-login">
         Iniciar sesión
@@ -132,6 +138,3 @@
   </section>
 
 </main>
-```
-
-

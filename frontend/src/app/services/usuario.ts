@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_URL } from '../config';
 
 export interface Usuario {
   id: number;
@@ -13,7 +14,7 @@ export interface Usuario {
 export class UsuarioService {
 
   private http = inject(HttpClient);
-private url = 'https://bancadigital-1.onrender.com/api/usuarios';
+private url = `${API_URL}/usuarios`;
 
   listar(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.url);

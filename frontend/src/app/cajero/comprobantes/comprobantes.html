@@ -1,0 +1,27 @@
+<h1 class="vista-titulo">Comprobantes</h1>
+
+@if (mensaje()) {
+  <p class="vista-aviso error">{{ mensaje() }}</p>
+}
+
+<section class="vista-panel">
+  <form class="vista-form" (ngSubmit)="buscar()">
+    <div class="vista-campo">
+      <label for="codigo">Código del comprobante</label>
+      <input id="codigo" name="codigo" type="text" [(ngModel)]="codigo" placeholder="Ej: DEP-000008" autocomplete="off">
+    </div>
+    <button type="submit" class="vista-btn">Buscar</button>
+  </form>
+</section>
+
+@if (comprobante(); as t) {
+  <section class="vista-panel">
+    <h2>Comprobante {{ t.comprobante }}</h2>
+    <p><strong>Operación:</strong> {{ t.tipo }} N° {{ t.id }}</p>
+    <p><strong>Fecha:</strong> {{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+    @if (t.cuentaOrigen) { <p><strong>Cuenta de origen:</strong> {{ t.cuentaOrigen }}</p> }
+    @if (t.cuentaDestino) { <p><strong>Cuenta de destino:</strong> {{ t.cuentaDestino }}</p> }
+    <p><strong>Monto:</strong> S/ {{ t.monto | number:'1.2-2' }}</p>
+    <button type="button" class="vista-btn secundario" (click)="imprimir()">Imprimir</button>
+  </section>
+}

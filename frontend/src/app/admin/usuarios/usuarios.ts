@@ -11,7 +11,7 @@ import { UsuarioService, Usuario } from '../../services/usuario';
 export class Usuarios implements OnInit {
   private servicio = inject(UsuarioService);
 
-  roles = ['ADMIN', 'CLIENTE', 'ASESOR', 'CAJERO'];
+  roles = ['ADMIN', 'CLIENTE', 'ASESOR', 'CAJERO', 'AUDITOR'];
   usuarios: Usuario[] = [];
   nuevo = { username: '', password: '', rol: '' };
   mensaje = '';

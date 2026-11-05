@@ -1,0 +1,77 @@
+<h1 class="vista-titulo">Transacciones</h1>
+
+@if (mensaje()) {
+  <p class="vista-aviso" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<section class="vista-panel">
+  <h2>Filtros</h2>
+  <div class="vista-form">
+    <div class="vista-campo">
+      <label for="tipo">Tipo</label>
+      <select id="tipo" [(ngModel)]="tipo">
+        <option value="">Todos</option>
+        @for (t of tipos; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="vista-campo">
+      <label for="desde">Desde</label>
+      <input id="desde" type="date" [(ngModel)]="desde">
+    </div>
+
+    <div class="vista-campo">
+      <label for="hasta">Hasta</label>
+      <input id="hasta" type="date" [(ngModel)]="hasta">
+    </div>
+
+    <div class="vista-campo">
+      <label for="min">Monto mínimo (S/)</label>
+      <input id="min" type="number" min="0" step="0.01" [(ngModel)]="montoMinimo" placeholder="0.00">
+    </div>
+
+    <button type="button" class="vista-btn" (click)="buscar()">Buscar</button>
+    <button type="button" class="vista-btn secundario" (click)="limpiar()">Limpiar</button>
+  </div>
+</section>
+
+<section class="vista-panel">
+  <div class="vista-form" style="justify-content: space-between">
+    <h2 style="margin: 0">{{ lista().length }} resultado(s)</h2>
+
+    <div class="vista-form">
+      <div class="vista-campo" style="min-width: 160px">
+        <label for="formato">Exportar como</label>
+        <select id="formato" [(ngModel)]="formato">
+          @for (f of formatos; track f.valor) {
+            <option [value]="f.valor">{{ f.texto }}</option>
+          }
+        </select>
+      </div>
+      <button type="button" class="vista-btn" [disabled]="lista().length === 0" (click)="exportar()">Exportar</button>
+    </div>
+  </div>
+
+  <div class="vista-tabla-caja" style="margin-top: 14px">
+    <table class="vista-tabla">
+      <thead>
+        <tr><th>N°</th><th>Fecha</th><th>Tipo</th><th>Origen</th><th>Destino</th><th class="num">Monto</th><th>Comprobante</th></tr>
+      </thead>
+      <tbody>
+        @for (t of lista(); track t.id) {
+          <tr>
+            <td>{{ t.id }}</td>
+            <td>{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ t.tipo }}</td>
+            <td>{{ t.cuentaOrigen }}</td>
+            <td>{{ t.cuentaDestino }}</td>
+            <td class="num">S/ {{ t.monto | number:'1.2-2' }}</td>
+            <td>{{ t.comprobante }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

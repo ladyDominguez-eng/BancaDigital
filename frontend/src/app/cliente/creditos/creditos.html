@@ -1,0 +1,51 @@
+<h1 class="vista-titulo">Créditos</h1>
+
+@if (mensaje()) {
+  <p class="vista-aviso" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<section class="vista-panel">
+  <h2>Solicitar un crédito</h2>
+  <form class="vista-form" (ngSubmit)="solicitar()">
+    <div class="vista-campo">
+      <label for="monto">Monto (S/)</label>
+      <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="Ej: 5000">
+    </div>
+
+    <div class="vista-campo">
+      <label for="plazo">Plazo (meses)</label>
+      <input id="plazo" name="plazo" type="number" min="1" step="1" [(ngModel)]="plazoMeses">
+    </div>
+
+    <button type="submit" class="vista-btn" [disabled]="enviando()">Solicitar</button>
+  </form>
+</section>
+
+<section class="vista-panel">
+  <h2>Mis solicitudes</h2>
+
+  @if (solicitudes().length === 0) {
+    <p class="vista-vacio">Todavía no has solicitado créditos.</p>
+  } @else {
+    <div class="vista-tabla-caja">
+      <table class="vista-tabla">
+        <thead>
+          <tr><th>N°</th><th>Fecha</th><th class="num">Monto</th><th>Plazo</th><th class="num">Cuota mensual</th><th>Estado</th><th>Observaciones</th></tr>
+        </thead>
+        <tbody>
+          @for (s of solicitudes(); track s.id) {
+            <tr>
+              <td>{{ s.id }}</td>
+              <td>{{ s.fecha | date:'dd/MM/yyyy' }}</td>
+              <td class="num">S/ {{ s.monto | number:'1.2-2' }}</td>
+              <td>{{ s.plazoMeses }} meses</td>
+              <td class="num">S/ {{ s.cuotaMensual | number:'1.2-2' }}</td>
+              <td><span [class]="'vista-etiqueta ' + s.estado">{{ s.estado }}</span></td>
+              <td>{{ s.observaciones }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

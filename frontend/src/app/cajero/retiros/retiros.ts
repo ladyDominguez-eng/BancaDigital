@@ -1,0 +1,38 @@
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CajeroService } from '../../services/cajero';
+
+/** RF-09: el cajero registra retiros. El saldo y el límite los valida el backend. */
+@Component({
+  selector: 'app-retiros',
+  imports: [FormsModule],
+  templateUrl: './retiros.html'
+})
+export class Retiros {
+  private servicio = inject(CajeroService);
+
+  numeroCuenta = '';
+  monto: number | null = null;
+  mensaje = signal('');
+  esError = signal(false);
+
+  retirar() {
+    if (!this.numeroCuenta.trim() || !this.monto) {
+      this.avisar('Completa el número de cuenta y el monto.', true);
+      return;
+    }
+    this.servicio.retirar(this.numeroCuenta.trim(), this.monto).subscribe({
+      next: r => {
+        this.avisar(`${r.mensaje} Comprobante ${r.comprobante}.`, false);
+        this.numeroCuenta = '';
+        this.monto = null;
+      },
+      error: e => this.avisar(e.error?.error ?? 'No se pudo registrar el retiro.', true)
+    });
+  }
+
+  private avisar(texto: string, error: boolean) {
+    this.mensaje.set(texto);
+    this.esError.set(error);
+  }
+}

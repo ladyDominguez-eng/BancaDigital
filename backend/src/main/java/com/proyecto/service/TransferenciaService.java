@@ -3,7 +3,7 @@ package com.proyecto.service;
 import com.proyecto.dao.ICuentaDAO;
 import com.proyecto.dao.ITransaccionDAO;
 import com.proyecto.model.Cuenta;
-import com.proyecto.model.EstadoCuenta;
+import com.proyecto.util.Validaciones;
 import com.proyecto.model.ServicioPago;
 import com.proyecto.model.TransaccionVista;
 import java.math.BigDecimal;
@@ -41,15 +41,15 @@ public class TransferenciaService {
     public TransaccionVista transferir(int usuarioId, int cuentaOrigenId, String numeroDestino,
             BigDecimal monto) throws SQLException {
 
-        validarMonto(monto);
+        Validaciones.montoValido(monto);
 
         if (numeroDestino == null || numeroDestino.isBlank()) {
             throw new IllegalArgumentException("Indica el número de la cuenta de destino.");
         }
 
         Cuenta origen = cuentaPropia(cuentaOrigenId, usuarioId);
-        validarActiva(origen, "origen");
-        validarSaldo(origen, monto);
+        Validaciones.cuentaActiva(origen, "de origen");
+        Validaciones.saldoSuficiente(origen, monto);
 
         Cuenta destino = cuentas.buscarPorNumero(numeroDestino.trim());
         if (destino == null) {
@@ -75,27 +75,19 @@ public class TransferenciaService {
     public TransaccionVista pagarServicio(int usuarioId, int cuentaId, String servicio,
             BigDecimal monto) throws SQLException {
 
-        validarMonto(monto);
+        Validaciones.montoValido(monto);
         ServicioPago tipo = ServicioPago.desde(servicio);
 
         Cuenta cuenta = cuentaPropia(cuentaId, usuarioId);
-        validarActiva(cuenta, "de pago");
-        validarSaldo(cuenta, monto);
+        Validaciones.cuentaActiva(cuenta, "de pago");
+        Validaciones.saldoSuficiente(cuenta, monto);
 
         return transacciones.registrarPago(
                 cuenta.getId(), monto, cuenta.getSaldoMinimo(), tipo.name());
     }
 
-    // ---------------- Validaciones reutilizadas ----------------
-
-    private void validarMonto(BigDecimal monto) {
-        if (monto == null || monto.signum() <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor que cero.");
-        }
-        if (monto.scale() > 2) {
-            throw new IllegalArgumentException("El monto admite como máximo 2 decimales.");
-        }
-    }
+    // Las validaciones comunes (monto, cuenta activa, saldo) están en util.Validaciones
+    // y las comparte también el servicio del cajero: no se copian en cada servicio.
 
     // Una cuenta ajena se trata como inexistente: no se revela que existe
     private Cuenta cuentaPropia(int cuentaId, int usuarioId) throws SQLException {
@@ -106,15 +98,4 @@ public class TransferenciaService {
         return c;
     }
 
-    private void validarActiva(Cuenta c, String rol) {
-        if (!EstadoCuenta.ACTIVA.equals(c.getEstado())) {
-            throw new IllegalArgumentException("La cuenta " + rol + " no está activa.");
-        }
-    }
-
-    private void validarSaldo(Cuenta c, BigDecimal monto) {
-        if (c.getSaldo().subtract(monto).compareTo(c.getSaldoMinimo()) < 0) {
-            throw new IllegalArgumentException("Saldo insuficiente.");
-        }
-    }
 }

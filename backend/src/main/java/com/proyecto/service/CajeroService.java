@@ -1,96 +1,124 @@
 package com.proyecto.service;
 
 import com.proyecto.dao.ICuentaDAO;
-import com.proyecto.dao.factory.DAOFactory;
+import com.proyecto.dao.ITransaccionDAO;
 import com.proyecto.model.Cuenta;
-import com.proyecto.model.EstadoCuenta;
+import com.proyecto.model.TransaccionVista;
+import com.proyecto.patterns.AuditoriaPublisher;
+import com.proyecto.patterns.EventoAuditoria;
+import com.proyecto.util.Validaciones;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+/**
+ * Reglas del cajero: consultar cuentas (RF-10), registrar depósitos y
+ * retiros (RF-09) y consultar comprobantes (RF-14).
+ *
+ * D de SOLID: depende de interfaces DAO que recibe por constructor (antes
+ * las creaba con la Factory dentro de la clase). Observer: cada operación
+ * se publica a la auditoría, con el id del cajero que la hizo.
+ */
+@Service
 public class CajeroService {
 
-    // LÍMITE: el administrador lo configura en la tabla parametro_sistema
-    // (RF-03) con este nombre. PROBLEMA: antes el 50 000 estaba fijo en el
-    // código y cambiarlo exigía recompilar y desplegar. Si el parámetro no
-    // existe se usa el valor por defecto de siempre, así nada se rompe.
-    private static final String PARAM_LIMITE_DEPOSITO = "LIMITE_DEPOSITO";
-    private static final BigDecimal LIMITE_DEPOSITO_POR_DEFECTO =
-            new BigDecimal("50000.00");
+    // LÍMITES: el administrador los configura en parametro_sistema (RF-03)
+    // con estos nombres. PROBLEMA: antes el 50 000 estaba fijo en el código
+    // y cambiarlo exigía recompilar y desplegar. Si el parámetro no existe
+    // se usa el valor por defecto, así nada se rompe.
+    static final String PARAM_LIMITE_DEPOSITO = "LIMITE_DEPOSITO";
+    static final BigDecimal LIMITE_DEPOSITO_POR_DEFECTO = new BigDecimal("50000.00");
+    static final String PARAM_LIMITE_RETIRO = "LIMITE_RETIRO";
+    static final BigDecimal LIMITE_RETIRO_POR_DEFECTO = new BigDecimal("10000.00");
 
-    private final ParametroService parametros = new ParametroService();
+    private final ICuentaDAO cuentas;
+    private final ITransaccionDAO transacciones;
+    private final ParametroService parametros;
+    private final AuditoriaPublisher auditoria;
 
-    // FACTORY: obtiene el DAO de cuentas mediante su interfaz
-    private final ICuentaDAO dao = DAOFactory.crearCuentaDAO();
+    public CajeroService(ICuentaDAO cuentas, ITransaccionDAO transacciones,
+            ParametroService parametros, AuditoriaPublisher auditoria) {
+        this.cuentas = cuentas;
+        this.transacciones = transacciones;
+        this.parametros = parametros;
+        this.auditoria = auditoria;
+    }
 
     // CONSULTAR: busca por número de cuenta o por DNI
-    public List<Cuenta> consultar(String dni, String numero)
-            throws SQLException {
+    public List<Cuenta> consultar(String dni, String numero) throws SQLException {
 
-        // VALIDACIÓN: comprueba si ingresaron número de cuenta
         if (numero != null && !numero.isBlank()) {
-
-            // BÚSQUEDA: consulta la cuenta por número
-            Cuenta c = dao.buscarPorNumero(numero.trim());
-
-            // LISTA: prepara el resultado
+            Cuenta c = cuentas.buscarPorNumero(numero.trim());
             List<Cuenta> lista = new ArrayList<>();
-
-            // RESULTADO: agrega la cuenta si existe
             if (c != null) lista.add(c);
-
             return lista;
         }
 
-        // BÚSQUEDA: consulta las cuentas por DNI
         if (dni != null && !dni.isBlank()) {
-            return dao.buscarPorDni(dni.trim());
+            return cuentas.buscarPorDni(dni.trim());
         }
 
-        // ERROR: no ingresó DNI ni número de cuenta
-        throw new IllegalArgumentException(
-                "Ingresa un DNI o un número de cuenta.");
+        throw new IllegalArgumentException("Ingresa un DNI o un número de cuenta.");
     }
 
-    // DEPOSITAR: valida y realiza el depósito
-    public int depositar(String numero, BigDecimal monto)
+    public TransaccionVista depositar(int cajeroId, String numero, BigDecimal monto)
             throws SQLException {
 
-        // VALIDACIÓN: número obligatorio
-        if (numero == null || numero.isBlank()) {
-            throw new IllegalArgumentException(
-                    "El número de cuenta es obligatorio.");
-        }
-
-        // VALIDACIÓN: monto mayor que cero
-        if (monto == null || monto.signum() <= 0) {
-            throw new IllegalArgumentException(
-                    "El monto debe ser mayor que cero.");
-        }
-
-        // VALIDACIÓN: respeta el límite máximo
-        BigDecimal limite = parametros.obtenerNumero(
-                PARAM_LIMITE_DEPOSITO, LIMITE_DEPOSITO_POR_DEFECTO);
-
+        Validaciones.montoValido(monto);
+        BigDecimal limite = parametros.obtenerNumero(PARAM_LIMITE_DEPOSITO, LIMITE_DEPOSITO_POR_DEFECTO);
         if (monto.compareTo(limite) > 0) {
-            throw new IllegalArgumentException(
-                    "El monto supera el máximo permitido.");
+            throw new IllegalArgumentException("El monto supera el máximo permitido.");
         }
 
-        // BÚSQUEDA: comprueba que la cuenta exista
-        Cuenta c = dao.buscarPorNumero(numero.trim());
+        Cuenta c = cuentaExistente(numero);
+        Validaciones.cuentaActiva(c, "");
 
-        // ERROR: cuenta inexistente
-        if (c == null)
+        TransaccionVista t = transacciones.registrarDeposito(c.getId(), monto);
+        auditoria.publicar(new EventoAuditoria(cajeroId, "DEPOSITO " + t.comprobante()));
+        return t;
+    }
+
+    public TransaccionVista retirar(int cajeroId, String numero, BigDecimal monto)
+            throws SQLException {
+
+        Validaciones.montoValido(monto);
+        BigDecimal limite = parametros.obtenerNumero(PARAM_LIMITE_RETIRO, LIMITE_RETIRO_POR_DEFECTO);
+        if (monto.compareTo(limite) > 0) {
+            throw new IllegalArgumentException("El monto supera el máximo de retiro permitido.");
+        }
+
+        Cuenta c = cuentaExistente(numero);
+        Validaciones.cuentaActiva(c, "");
+        Validaciones.saldoSuficiente(c, monto);
+
+        // El saldo mínimo lo define la propia cuenta (Experto): 0 en ahorro, sobregiro en corriente
+        TransaccionVista t = transacciones.registrarRetiro(c.getId(), monto, c.getSaldoMinimo());
+        auditoria.publicar(new EventoAuditoria(cajeroId, "RETIRO " + t.comprobante()));
+        return t;
+    }
+
+    /** Busca un comprobante por su código (RF-14). */
+    public TransaccionVista buscarComprobante(String codigo) throws SQLException {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("Ingresa el código del comprobante.");
+        }
+        TransaccionVista t = transacciones.buscarPorComprobante(codigo.trim().toUpperCase());
+        if (t == null) {
+            throw new IllegalArgumentException("No existe un comprobante con ese código.");
+        }
+        return t;
+    }
+
+    private Cuenta cuentaExistente(String numero) throws SQLException {
+        if (numero == null || numero.isBlank()) {
+            throw new IllegalArgumentException("El número de cuenta es obligatorio.");
+        }
+        Cuenta c = cuentas.buscarPorNumero(numero.trim());
+        if (c == null) {
             throw new IllegalArgumentException("La cuenta no existe.");
-
-        // VALIDACIÓN: cuenta activa
-        if (!EstadoCuenta.ACTIVA.equals(c.getEstado()))
-            throw new IllegalArgumentException(
-                    "La cuenta no está activa.");
-
-        // OPERACIÓN: solicita al DAO realizar el depósito
-        return dao.depositar(numero.trim(), monto);
+        }
+        return c;
     }
 }

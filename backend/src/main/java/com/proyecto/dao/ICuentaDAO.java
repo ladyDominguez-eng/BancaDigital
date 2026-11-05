@@ -9,7 +9,8 @@ import java.util.List;
 public interface ICuentaDAO {
     Cuenta buscarPorNumero(String numero) throws SQLException;
     List<Cuenta> buscarPorDni(String dni) throws SQLException;
-    int depositar(String numero, BigDecimal monto) throws SQLException;
+    // El depósito y demás movimientos de dinero pasaron a ITransaccionDAO
+    // (S de SOLID: este DAO solo consulta cuentas).
 
     /** Cuentas del cliente asociado a ese usuario (para el rol CLIENTE). */
     List<Cuenta> listarPorUsuario(int usuarioId) throws SQLException;

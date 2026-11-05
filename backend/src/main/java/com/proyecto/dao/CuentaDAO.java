@@ -3,7 +3,6 @@ package com.proyecto.dao;
 import com.proyecto.model.*;
 import com.proyecto.dao.factory.CuentaFactory;
 import com.proyecto.util.ConexionBD;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,43 +87,5 @@ public class CuentaDAO implements ICuentaDAO {
             }
         }
         return lista;
-    }
-
-    /**
-     * Depósito: actualizar el saldo y registrar la transacción deben
-     * ocurrir juntos o ninguno (RNF-03). La transacción (commit/rollback)
-     * la gestiona ConexionBD.ejecutarTransaccion, en vez de repetir aquí
-     * el manejo de autocommit.
-     */
-    @Override
-    public int depositar(String numero, BigDecimal monto) throws SQLException {
-        return ConexionBD.getInstancia().ejecutarTransaccion(con -> {
-            int cuentaId;
-            try (PreparedStatement ps = con.prepareStatement(
-                    "UPDATE cuenta SET saldo = saldo + ? WHERE numero = ? AND estado = ? RETURNING id")) {
-                ps.setBigDecimal(1, monto);
-                ps.setString(2, numero);
-                ps.setString(3, EstadoCuenta.ACTIVA);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next()) throw new SQLException("Cuenta no encontrada o no activa");
-                    cuentaId = rs.getInt(1);
-                }
-            }
-
-            int transaccionId;
-            try (PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO transaccion (cuenta_destino_id, tipo, monto) VALUES (?, 'DEPOSITO', ?)",
-                    new String[]{"id"})) {
-                ps.setInt(1, cuentaId);
-                ps.setBigDecimal(2, monto);
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    rs.next();
-                    transaccionId = rs.getInt(1);
-                }
-            }
-
-            return transaccionId;
-        });
     }
 }

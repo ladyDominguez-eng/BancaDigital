@@ -14,6 +14,8 @@ import com.proyecto.dao.IUsuarioDAO;
 import com.proyecto.dao.InformesDAO;
 import com.proyecto.dao.ParametroDAO;
 import com.proyecto.dao.UsuarioDAO;
+import com.proyecto.dao.IRegistroClienteDAO;
+import com.proyecto.dao.RegistroClienteDAO;
 
 /**
  * PATRÓN: Factory (Creacional).
@@ -70,5 +72,10 @@ public class DAOFactory {
 
     public static ISolicitudCreditoDAO crearSolicitudCreditoDAO() {
         return new SolicitudCreditoDAO();
+    }
+
+    // Alta de cliente completo (usuario + cliente + cuenta) en una transacción
+    public static IRegistroClienteDAO crearRegistroClienteDAO() {
+        return new RegistroClienteDAO();
     }
 }

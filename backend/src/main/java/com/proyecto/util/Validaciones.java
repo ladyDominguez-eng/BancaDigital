@@ -28,6 +28,38 @@ public final class Validaciones {
         }
     }
 
+    // ---- Datos de acceso y de persona (los comparten el alta de usuarios y el de clientes) ----
+
+    /** 4 a 30 caracteres: letras, números, punto, guion y guion bajo (sin espacios). */
+    public static void usernameValido(String username) {
+        if (username == null || !username.matches("[A-Za-z0-9._-]{4,30}")) {
+            throw new IllegalArgumentException(
+                    "El usuario debe tener de 4 a 30 caracteres: letras, números, punto, guion o guion bajo.");
+        }
+    }
+
+    /** Mínimo 8 caracteres: es la regla básica de una contraseña aceptable. */
+    public static void claveValida(String password) {
+        if (password == null || password.length() < 8 || password.length() > 72) {
+            // 72 es el máximo que BCrypt tiene en cuenta
+            throw new IllegalArgumentException("La contraseña debe tener entre 8 y 72 caracteres.");
+        }
+    }
+
+    public static void dniValido(String dni) {
+        if (dni == null || !dni.matches("\\d{8}")) {
+            throw new IllegalArgumentException("El DNI debe tener exactamente 8 dígitos.");
+        }
+    }
+
+    /** @param campo nombre que verá el usuario en el mensaje, por ejemplo "Los nombres" */
+    public static void nombreValido(String texto, String campo) {
+        if (texto == null || !texto.trim().matches("[\\p{L} ']{2,60}")) {
+            throw new IllegalArgumentException(
+                    campo + " debe tener de 2 a 60 letras (sin números ni símbolos).");
+        }
+    }
+
     /** @param descripcion por ejemplo "de origen", para el mensaje de error */
     public static void cuentaActiva(Cuenta c, String descripcion) {
         if (!EstadoCuenta.ACTIVA.equals(c.getEstado())) {

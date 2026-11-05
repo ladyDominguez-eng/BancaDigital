@@ -47,8 +47,17 @@ public class UsuarioService {
         return usuarioDAO.listarTodos();
     }
 
-    // Método para validar usuario
+    // Valida las credenciales y dice solo si son correctas o no
     public boolean validarUsuario(String username, String password, String rol) {
+        return autenticar(username, password, rol) != null;
+    }
+
+    /**
+     * Valida las credenciales y devuelve el Usuario autenticado, o null si
+     * no son correctas. El login lo necesita para crear la sesión (token)
+     * con el id y el rol reales guardados en la base de datos.
+     */
+    public Usuario autenticar(String username, String password, String rol) {
 
         Usuario usuario = usuarioDAO.buscarPorUsername(username);
 
@@ -56,7 +65,7 @@ public class UsuarioService {
         // contraseña era correcta y el rol real del usuario, información
         // útil para un atacante que lea los registros del servidor.
         if (usuario == null) {
-            return false;
+            return null;
         }
 
         // Verifica: contraseña, rol y que el usuario esté activo
@@ -76,7 +85,7 @@ public class UsuarioService {
             );
         }
 
-        return valido;
+        return valido ? usuario : null;
     }
 
     /**

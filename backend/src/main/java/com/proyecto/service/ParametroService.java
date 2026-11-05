@@ -3,15 +3,30 @@ package com.proyecto.service;
 import com.proyecto.dao.IParametroDAO;
 import com.proyecto.dao.factory.DAOFactory;
 import com.proyecto.model.Parametro;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+@Service
 public class ParametroService {
 
-    // D de SOLID: depende de la interfaz; la Factory decide la clase concreta.
-    private final IParametroDAO dao = DAOFactory.crearParametroDAO();
+    // D de SOLID: depende de la interfaz IParametroDAO.
+    private final IParametroDAO dao;
+
+    // Constructor que usa Spring (y las pruebas, con un DAO falso)
+    @Autowired
+    public ParametroService(IParametroDAO dao) {
+        this.dao = dao;
+    }
+
+    // Constructor para el código existente que crea el servicio con "new":
+    // la Factory decide la clase concreta del DAO.
+    public ParametroService() {
+        this(DAOFactory.crearParametroDAO());
+    }
 
     public List<Parametro> listar() throws SQLException {
         return dao.listar();

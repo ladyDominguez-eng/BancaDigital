@@ -16,4 +16,7 @@ public interface ICuentaDAO {
 
     /** Cuenta por id, o null si no existe. */
     Cuenta buscarPorId(int id) throws SQLException;
+
+    /** Cuenta por id SOLO si pertenece a ese usuario; si es ajena devuelve null. */
+    Cuenta buscarDeUsuario(int cuentaId, int usuarioId) throws SQLException;
 }

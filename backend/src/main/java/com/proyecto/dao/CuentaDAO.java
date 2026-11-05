@@ -51,6 +51,19 @@ public class CuentaDAO implements ICuentaDAO {
     }
 
     @Override
+    public Cuenta buscarDeUsuario(int cuentaId, int usuarioId) throws SQLException {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                SELECT + "WHERE c.id = ? AND cl.usuario_id = ?")) {
+            ps.setInt(1, cuentaId);
+            ps.setInt(2, usuarioId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapear(rs) : null;
+            }
+        }
+    }
+
+    @Override
     public List<Cuenta> listarPorUsuario(int usuarioId) throws SQLException {
         Connection con = ConexionBD.getInstancia().getConexion();
         List<Cuenta> lista = new ArrayList<>();

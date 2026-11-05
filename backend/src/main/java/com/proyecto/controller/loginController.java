@@ -1,5 +1,6 @@
 package com.proyecto.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyecto.model.Usuario;
 import com.proyecto.model.UsuarioRequest;
+import com.proyecto.seguridad.AuthInterceptor;
+import com.proyecto.seguridad.GestorSesiones;
+import com.proyecto.seguridad.Sesion;
 import com.proyecto.service.UsuarioService;
 
 @RestController
@@ -23,27 +28,41 @@ public class loginController {
 
     @Autowired
     private UsuarioService usuarioService;
-    //define la ruta del enpoint y solo acepta peticiones POST, recibe un objeto JSON con username, password y rol, valida las credenciales y devuelve un objeto JSON indicando si el login fue exitoso o no.
+
+    // Define la ruta del endpoint (solo POST). Recibe username, password y rol,
+    // valida las credenciales y, si son correctas, crea una sesión y devuelve
+    // un token que el frontend enviará en cada petición (RNF-01).
     @PostMapping("/login")
-    //responseEntity<?> es una clase de Spring que representa toda la respuesta HTTP, 
-    // incluyendo el estado, los encabezados y el cuerpo.
-    //  El uso de <?> indica que el tipo de cuerpo de la respuesta puede ser cualquier cosa.
     public ResponseEntity<?> login(@RequestBody UsuarioRequest request) {
 
         // Registro con logger (no System.out) y sin datos sensibles
         log.info("Intento de inicio de sesión del usuario {}", request.getUsername());
 
-        boolean valido = usuarioService.validarUsuario(
+        Usuario usuario = usuarioService.autenticar(
             request.getUsername(),
             request.getPassword(),
             request.getRol()
         );
 
-        if (valido) {
-            return ResponseEntity.ok(Map.of("success", true, "rol", request.getRol()));
-        } else {
+        if (usuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("success", false, "error", "Credenciales inválidas"));
         }
+
+        String token = GestorSesiones.getInstancia().crear(
+            new Sesion(usuario.getId(), usuario.getUsername(), usuario.getRol()));
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "rol", usuario.getRol(),
+            "username", usuario.getUsername(),
+            "token", token));
+    }
+
+    // Cierra la sesión: el token deja de ser válido en el servidor
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest req) {
+        GestorSesiones.getInstancia().cerrar(AuthInterceptor.extraerToken(req));
+        return ResponseEntity.ok(Map.of("success", true));
     }
 }

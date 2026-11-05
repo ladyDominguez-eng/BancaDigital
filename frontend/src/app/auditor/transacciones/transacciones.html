@@ -1,0 +1,84 @@
+<header class="pagina-cabecera">
+  <h1>Transacciones</h1>
+  <p class="pagina-ayuda">Revisa los movimientos del banco con filtros y expórtalos para la auditoría.</p>
+</header>
+
+@if (mensaje()) {
+  <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
+}
+
+<section class="tarjeta">
+  <h2>Filtros</h2>
+  <form class="filtros" (ngSubmit)="buscar()">
+    <div class="campo">
+      <label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" [(ngModel)]="tipo">
+        <option value="">Todos</option>
+        @for (t of tipos; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+    </div>
+    <div class="campo">
+      <label for="desde">Desde</label>
+      <input id="desde" name="desde" type="date" [(ngModel)]="desde">
+    </div>
+    <div class="campo">
+      <label for="hasta">Hasta</label>
+      <input id="hasta" name="hasta" type="date" [(ngModel)]="hasta">
+    </div>
+    <div class="campo">
+      <label for="min">Monto mínimo (S/)</label>
+      <input id="min" name="min" type="number" min="0" step="0.01" [(ngModel)]="montoMinimo" placeholder="0.00">
+    </div>
+    <div class="acciones">
+      <button type="submit" class="btn">Buscar</button>
+      <button type="button" class="btn secundario" (click)="limpiar()">Limpiar</button>
+    </div>
+  </form>
+</section>
+
+<section class="tarjeta">
+  <div class="tarjeta-fila">
+    <h2>{{ lista().length }} resultado(s)</h2>
+
+    <div class="filtros">
+      <div class="campo" style="flex: 0 0 180px">
+        <label for="formato">Exportar como</label>
+        <select id="formato" [(ngModel)]="formato">
+          @for (f of formatos; track f.valor) {
+            <option [value]="f.valor">{{ f.texto }}</option>
+          }
+        </select>
+      </div>
+      <div class="acciones">
+        <button type="button" class="btn secundario" [disabled]="lista().length === 0" (click)="exportar()">Exportar</button>
+      </div>
+    </div>
+  </div>
+
+  @if (lista().length === 0) {
+    <p class="vacio"><strong>No hay transacciones para mostrar.</strong>Ajusta los filtros y pulsa «Buscar».</p>
+  } @else {
+    <div class="tabla-caja" style="margin-top: 16px">
+      <table class="tabla">
+        <thead>
+          <tr><th>N°</th><th>Fecha</th><th>Tipo</th><th>Origen</th><th>Destino</th><th class="num">Monto</th><th>Comprobante</th></tr>
+        </thead>
+        <tbody>
+          @for (t of lista(); track t.id) {
+            <tr>
+              <td>{{ t.id }}</td>
+              <td class="mono">{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ t.tipo }}</td>
+              <td class="mono">{{ t.cuentaOrigen }}</td>
+              <td class="mono">{{ t.cuentaDestino }}</td>
+              <td class="num">S/ {{ t.monto | number:'1.2-2' }}</td>
+              <td class="mono">{{ t.comprobante }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

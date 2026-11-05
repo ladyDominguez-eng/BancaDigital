@@ -18,6 +18,8 @@ import java.util.List;
  */
 public interface IUsuarioDAO {
     Usuario buscarPorUsername(String username);
+    Usuario buscarPorId(Long id);
+    boolean cambiarRol(Long id, String rol);
     List<Usuario> listarTodos();
     Usuario crear(Usuario usuario);
     boolean cambiarEstado(Long id, boolean activo);

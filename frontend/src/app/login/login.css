@@ -447,3 +447,11 @@
     font-size: 24px;
   }
 }
+
+/* Mensaje de error del inicio de sesión */
+.login-error {
+  margin: 4px 0 12px;
+  color: #ff8a8a;
+  font-size: 0.9rem;
+  font-weight: 600;
+}

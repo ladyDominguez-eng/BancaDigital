@@ -1,0 +1,53 @@
+<header class="pagina-cabecera">
+  <h1>Reporte de riesgo</h1>
+  <p class="pagina-ayuda">Detecta operaciones sospechosas en un período. Elige las fechas y genera el reporte.</p>
+</header>
+
+@if (mensaje()) {
+  <p class="aviso error" role="alert">{{ mensaje() }}</p>
+}
+
+<section class="tarjeta">
+  <form class="filtros" (ngSubmit)="generar()">
+    <div class="campo">
+      <label for="desde">Desde</label>
+      <input id="desde" name="desde" type="date" [(ngModel)]="desde">
+    </div>
+    <div class="campo">
+      <label for="hasta">Hasta</label>
+      <input id="hasta" name="hasta" type="date" [(ngModel)]="hasta">
+    </div>
+    <div class="acciones">
+      <button type="submit" class="btn">Generar reporte</button>
+    </div>
+  </form>
+</section>
+
+<section class="tarjeta">
+  <h2>Alertas ({{ alertas().length }})</h2>
+
+  @if (consultado() && alertas().length === 0) {
+    <p class="vacio"><strong>No se detectaron operaciones sospechosas.</strong>El período consultado no tiene alertas.</p>
+  } @else if (!consultado()) {
+    <p class="vacio"><strong>Aún no hay un reporte.</strong>Elige un período y pulsa «Generar reporte».</p>
+  } @else {
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead>
+          <tr><th>Regla</th><th>Detalle</th><th>Cuenta</th><th class="num">Monto</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+          @for (a of alertas(); track a.transaccionId + a.regla) {
+            <tr>
+              <td><strong>{{ nombreRegla(a.regla) }}</strong></td>
+              <td>{{ a.descripcion }}</td>
+              <td class="mono">{{ a.cuenta }}</td>
+              <td class="num">S/ {{ a.monto | number:'1.2-2' }}</td>
+              <td class="mono">{{ a.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -5,8 +5,7 @@ import { ParametroService, Parametro } from '../../services/parametro';
 @Component({
   selector: 'app-parametros',
   imports: [FormsModule],
-  templateUrl: './parametros.html',
-  styleUrl: './parametros.css'
+  templateUrl: './parametros.html'
 })
 export class Parametros implements OnInit {
 

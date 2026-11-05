@@ -4,6 +4,7 @@ package com.proyecto.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * PATRÓN: Singleton (Creacional).
@@ -95,7 +96,16 @@ public class ConexionBD {
     // Abre la conexión JDBC con PostgreSQL (se usa al inicio y al reconectar).
     private void conectar() {
         try {
-            conexion = DriverManager.getConnection(url, usuario, clave);
+            // prepareThreshold=0: Supabase usa un pooler (puerto 6543) que reparte las
+            // sentencias entre conexiones reales. Con sentencias preparadas del lado del
+            // servidor aparece a veces el error 'prepared statement "S_1" already exists'.
+            // Desactivarlas NO quita la protección contra inyección SQL: los valores
+            // siguen viajando como parámetros separados del SQL.
+            Properties propiedades = new Properties();
+            propiedades.setProperty("user", usuario);
+            propiedades.setProperty("password", clave);
+            propiedades.setProperty("prepareThreshold", "0");
+            conexion = DriverManager.getConnection(url, propiedades);
             System.out.println("Conexión JDBC establecida con PostgreSQL");
         } catch (SQLException e) {
             throw new IllegalStateException(

@@ -1,103 +1,59 @@
-<h1 class="page-title">Auditoría</h1>
+<header class="pagina-cabecera">
+  <h1>Bitácora de auditoría</h1>
+  <p class="pagina-ayuda">Quién hizo qué y cuándo. Filtra por usuario o por fechas para revisar un caso concreto.</p>
+</header>
 
-<section class="panel">
-
+<section class="tarjeta">
   <h2>Filtros</h2>
-
   <div class="filtros">
-
-    <div>
-      <label>Usuario ID</label>
-      <input
-        type="number"
-        placeholder="ID del usuario"
-        #usuario>
+    <div class="campo">
+      <label for="f-usuario">ID de usuario</label>
+      <input id="f-usuario" type="number" placeholder="Todos" #usuario>
     </div>
-
-    <div>
-      <label>Fecha desde</label>
-      <input
-        type="date"
-        #desde>
+    <div class="campo">
+      <label for="f-desde">Desde</label>
+      <input id="f-desde" type="date" #desde>
     </div>
-
-    <div>
-      <label>Fecha hasta</label>
-      <input
-        type="date"
-        #hasta>
+    <div class="campo">
+      <label for="f-hasta">Hasta</label>
+      <input id="f-hasta" type="date" #hasta>
     </div>
-
-    <button
-      type="button"
-      (click)="
-        usuarioId.set(
-          usuario.value ? +usuario.value : undefined
-        );
-        fechaDesde.set(desde.value);
-        fechaHasta.set(hasta.value);
-        cargarAuditoria()
-      ">
-      Filtrar
-    </button>
-
-    
-
+    <div class="acciones">
+      <button type="button" class="btn"
+        (click)="
+          usuarioId.set(usuario.value ? +usuario.value : undefined);
+          fechaDesde.set(desde.value);
+          fechaHasta.set(hasta.value);
+          cargarAuditoria()
+        ">
+        Filtrar
+      </button>
+    </div>
   </div>
-
 </section>
 
-<section class="panel">
+<section class="tarjeta">
+  <h2>Registros ({{ registros().length }})</h2>
 
-  <h2>Registro de auditoría</h2>
-
-  <table>
-
-    <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Usuario</th>
-        <th>Rol</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-      @for (registro of registros(); track registro.id) {
-
-        <tr>
-          <td>
-            {{ registro.fecha | date:'dd/MM/yyyy HH:mm' }}
-          </td>
-
-          <td>
-            {{ registro.username }}
-          </td>
-
-          <td>
-            {{ registro.rol }}
-          </td>
-
-          <td>
-            {{ registro.accion }}
-          </td>
-        </tr>
-
-      }
-
-      @if (registros().length === 0) {
-
-        <tr>
-          <td colspan="4">
-            No hay registros de auditoría.
-          </td>
-        </tr>
-
-      }
-
-    </tbody>
-
-  </table>
-
+  @if (registros().length === 0) {
+    <p class="vacio"><strong>No hay registros de auditoría.</strong>Prueba con otro rango de fechas o quita el filtro de usuario.</p>
+  } @else {
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead>
+          <tr><th>Fecha</th><th>Usuario</th><th>Rol</th><th>Acción</th></tr>
+        </thead>
+        <tbody>
+          @for (registro of registros(); track registro.id) {
+            <tr>
+              <td class="mono">{{ registro.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ registro.username }}</td>
+              <td>{{ registro.rol }}</td>
+              <td>{{ registro.accion }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </section>

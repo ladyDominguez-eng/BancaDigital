@@ -1,0 +1,36 @@
+<header class="pagina-cabecera">
+  <h1>Comprobantes</h1>
+  <p class="pagina-ayuda">Busca un comprobante por su código para consultarlo o volver a imprimirlo.</p>
+</header>
+
+@if (mensaje()) {
+  <p class="aviso error" role="alert">{{ mensaje() }}</p>
+}
+
+<section class="tarjeta no-imprimir">
+  <form class="filtros" (ngSubmit)="buscar()">
+    <div class="campo">
+      <label for="codigo">Código del comprobante</label>
+      <input id="codigo" name="codigo" type="text" [(ngModel)]="codigo" placeholder="Ej: DEP-000008" autocomplete="off">
+    </div>
+    <div class="acciones">
+      <button type="submit" class="btn">Buscar</button>
+    </div>
+  </form>
+</section>
+
+@if (comprobante(); as t) {
+  <section class="tarjeta">
+    <h2>Comprobante {{ t.comprobante }}</h2>
+    <dl class="datos">
+      <dt>Operación</dt><dd>{{ t.tipo }} N° {{ t.id }}</dd>
+      <dt>Fecha</dt><dd>{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</dd>
+      @if (t.cuentaOrigen) { <dt>Cuenta de origen</dt><dd>{{ t.cuentaOrigen }}</dd> }
+      @if (t.cuentaDestino) { <dt>Cuenta de destino</dt><dd>{{ t.cuentaDestino }}</dd> }
+      <dt>Monto</dt><dd>S/ {{ t.monto | number:'1.2-2' }}</dd>
+    </dl>
+    <div class="acciones">
+      <button type="button" class="btn secundario" (click)="imprimir()">Imprimir</button>
+    </div>
+  </section>
+}

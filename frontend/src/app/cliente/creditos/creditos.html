@@ -1,0 +1,56 @@
+<header class="pagina-cabecera">
+  <h1>Créditos</h1>
+  <p class="pagina-ayuda">Solicita un crédito y sigue el estado de tus solicitudes. Un asesor la revisará y verás su respuesta aquí.</p>
+</header>
+
+@if (mensaje()) {
+  <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
+}
+
+<section class="tarjeta">
+  <h2>Solicitar un crédito</h2>
+  <form class="formulario" (ngSubmit)="solicitar()">
+    <div class="campos">
+      <div class="campo">
+        <label for="monto">Monto (S/)</label>
+        <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="Ej: 5000">
+      </div>
+      <div class="campo">
+        <label for="plazo">Plazo (meses)</label>
+        <input id="plazo" name="plazo" type="number" min="1" step="1" [(ngModel)]="plazoMeses">
+      </div>
+    </div>
+    <div class="acciones">
+      <button type="submit" class="btn" [disabled]="enviando()">{{ enviando() ? 'Enviando…' : 'Solicitar crédito' }}</button>
+    </div>
+  </form>
+</section>
+
+<section class="tarjeta">
+  <h2>Mis solicitudes</h2>
+
+  @if (solicitudes().length === 0) {
+    <p class="vacio"><strong>Todavía no has solicitado créditos.</strong>Cuando envíes una solicitud la verás aquí con su estado.</p>
+  } @else {
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead>
+          <tr><th>N°</th><th>Fecha</th><th class="num">Monto</th><th>Plazo</th><th class="num">Cuota mensual</th><th>Estado</th><th>Observaciones</th></tr>
+        </thead>
+        <tbody>
+          @for (s of solicitudes(); track s.id) {
+            <tr>
+              <td>{{ s.id }}</td>
+              <td class="mono">{{ s.fecha | date:'dd/MM/yyyy' }}</td>
+              <td class="num">S/ {{ s.monto | number:'1.2-2' }}</td>
+              <td>{{ s.plazoMeses }} meses</td>
+              <td class="num">S/ {{ s.cuotaMensual | number:'1.2-2' }}</td>
+              <td><span [class]="'etiqueta ' + s.estado">{{ s.estado }}</span></td>
+              <td>{{ s.observaciones }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

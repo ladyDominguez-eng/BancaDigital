@@ -35,6 +35,15 @@ public class CuentaFactory {
 
     private CuentaFactory() { }
 
+    /**
+     * Tipos que la fábrica sabe crear. Sirve para validar lo que escribe el
+     * usuario: así un tipo nuevo registrado arriba queda aceptado sin tocar
+     * ninguna validación (O de SOLID).
+     */
+    public static boolean esTipoValido(String tipo) {
+        return tipo != null && TIPOS.containsKey(tipo.trim().toUpperCase());
+    }
+
     public static Cuenta crear(String tipo) {
         String clave = tipo == null ? "" : tipo.trim().toUpperCase();
         return TIPOS.getOrDefault(clave, CuentaAhorro::new).get();

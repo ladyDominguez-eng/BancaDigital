@@ -2,12 +2,20 @@ package com.proyecto.dao.factory;
 
 import com.proyecto.dao.CuentaDAO;
 import com.proyecto.dao.ICuentaDAO;
+import com.proyecto.dao.ClienteDAO;
+import com.proyecto.dao.ISolicitudCreditoDAO;
+import com.proyecto.dao.SolicitudCreditoDAO;
+import com.proyecto.dao.IClienteDAO;
+import com.proyecto.dao.ITransaccionDAO;
+import com.proyecto.dao.TransaccionDAO;
 import com.proyecto.dao.IInformesDAO;
 import com.proyecto.dao.IParametroDAO;
 import com.proyecto.dao.IUsuarioDAO;
 import com.proyecto.dao.InformesDAO;
 import com.proyecto.dao.ParametroDAO;
 import com.proyecto.dao.UsuarioDAO;
+import com.proyecto.dao.IRegistroClienteDAO;
+import com.proyecto.dao.RegistroClienteDAO;
 
 /**
  * PATRÓN: Factory (Creacional).
@@ -51,5 +59,23 @@ public class DAOFactory {
 
     public static IInformesDAO crearInformesDAO() {
         return new InformesDAO();
+    }
+
+    // DAO de los módulos Cliente, Cajero, Asesor y Auditor
+    public static ITransaccionDAO crearTransaccionDAO() {
+        return new TransaccionDAO();
+    }
+
+    public static IClienteDAO crearClienteDAO() {
+        return new ClienteDAO();
+    }
+
+    public static ISolicitudCreditoDAO crearSolicitudCreditoDAO() {
+        return new SolicitudCreditoDAO();
+    }
+
+    // Alta de cliente completo (usuario + cliente + cuenta) en una transacción
+    public static IRegistroClienteDAO crearRegistroClienteDAO() {
+        return new RegistroClienteDAO();
     }
 }

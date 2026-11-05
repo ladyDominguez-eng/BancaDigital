@@ -1,0 +1,84 @@
+<header class="pagina-cabecera">
+  <h1>Registrar cliente</h1>
+  <p class="pagina-ayuda">Da de alta a un cliente nuevo: sus datos, su acceso al sistema y su primera cuenta. Todo se crea en un solo paso.</p>
+</header>
+
+@if (error()) {
+  <p class="aviso error" role="alert">{{ error() }}</p>
+}
+
+@if (registrado(); as r) {
+  <div class="comprobante" role="status">
+    <p class="aviso">Cliente registrado</p>
+    <p><strong>{{ nombreRegistrado() }}</strong> ya puede iniciar sesión con el rol Cliente.</p>
+    <p>Cuenta asignada: <span class="codigo">{{ r.numeroCuenta }}</span></p>
+    @if (r.comprobante) {
+      <p>Depósito inicial registrado con el comprobante <span class="codigo">{{ r.comprobante }}</span>.</p>
+    }
+  </div>
+}
+
+<section class="tarjeta">
+  <form class="formulario" (ngSubmit)="registrar()">
+
+    <fieldset class="grupo">
+      <legend>Datos personales</legend>
+      <div class="campos">
+        <div class="campo">
+          <label for="nombres">Nombres</label>
+          <input id="nombres" name="nombres" type="text" [(ngModel)]="datos.nombres" maxlength="60" autocomplete="off" required>
+        </div>
+        <div class="campo">
+          <label for="apellidos">Apellidos</label>
+          <input id="apellidos" name="apellidos" type="text" [(ngModel)]="datos.apellidos" maxlength="60" autocomplete="off" required>
+        </div>
+        <div class="campo">
+          <label for="dni">DNI</label>
+          <input id="dni" name="dni" type="text" inputmode="numeric" maxlength="8" [(ngModel)]="datos.dni" autocomplete="off" required>
+          <span class="ayuda">8 dígitos</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="grupo">
+      <legend>Acceso al sistema</legend>
+      <div class="campos">
+        <div class="campo">
+          <label for="username">Usuario</label>
+          <input id="username" name="username" type="text" [(ngModel)]="datos.username" maxlength="30" autocomplete="off" required>
+          <span class="ayuda">De 4 a 30 caracteres, sin espacios</span>
+        </div>
+        <div class="campo">
+          <label for="password">Contraseña inicial</label>
+          <input id="password" name="password" type="password" [(ngModel)]="datos.password" autocomplete="new-password" required>
+          <span class="ayuda">Mínimo 8 caracteres</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="grupo">
+      <legend>Primera cuenta</legend>
+      <div class="campos">
+        <div class="campo">
+          <label for="tipo">Tipo de cuenta</label>
+          <select id="tipo" name="tipo" [(ngModel)]="datos.tipoCuenta">
+            @for (t of tiposCuenta; track t.valor) {
+              <option [value]="t.valor">{{ t.texto }}</option>
+            }
+          </select>
+        </div>
+        <div class="campo">
+          <label for="saldo">Depósito inicial (S/)</label>
+          <input id="saldo" name="saldo" type="number" min="0" step="0.01" [(ngModel)]="datos.saldoInicial" placeholder="0.00">
+          <span class="ayuda">Opcional. El número de cuenta se asigna solo.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="acciones separada">
+      <button type="submit" class="btn" [disabled]="enviando()">
+        {{ enviando() ? 'Registrando…' : 'Registrar cliente' }}
+      </button>
+    </div>
+  </form>
+</section>

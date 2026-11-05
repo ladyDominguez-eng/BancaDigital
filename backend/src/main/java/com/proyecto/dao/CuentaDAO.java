@@ -3,7 +3,6 @@ package com.proyecto.dao;
 import com.proyecto.model.*;
 import com.proyecto.dao.factory.CuentaFactory;
 import com.proyecto.util.ConexionBD;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,44 @@ public class CuentaDAO implements ICuentaDAO {
     }
 
     @Override
+    public Cuenta buscarPorId(int id) throws SQLException {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(SELECT + "WHERE c.id = ?")) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapear(rs) : null;
+            }
+        }
+    }
+
+    @Override
+    public Cuenta buscarDeUsuario(int cuentaId, int usuarioId) throws SQLException {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                SELECT + "WHERE c.id = ? AND cl.usuario_id = ?")) {
+            ps.setInt(1, cuentaId);
+            ps.setInt(2, usuarioId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapear(rs) : null;
+            }
+        }
+    }
+
+    @Override
+    public List<Cuenta> listarPorUsuario(int usuarioId) throws SQLException {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        List<Cuenta> lista = new ArrayList<>();
+        try (PreparedStatement ps = con.prepareStatement(
+                SELECT + "WHERE cl.usuario_id = ? ORDER BY c.id")) {
+            ps.setInt(1, usuarioId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(mapear(rs));
+            }
+        }
+        return lista;
+    }
+
+    @Override
     public List<Cuenta> buscarPorDni(String dni) throws SQLException {
         Connection con = ConexionBD.getInstancia().getConexion();
         List<Cuenta> lista = new ArrayList<>();
@@ -50,43 +87,5 @@ public class CuentaDAO implements ICuentaDAO {
             }
         }
         return lista;
-    }
-
-    /**
-     * Depósito: actualizar el saldo y registrar la transacción deben
-     * ocurrir juntos o ninguno (RNF-03). La transacción (commit/rollback)
-     * la gestiona ConexionBD.ejecutarTransaccion, en vez de repetir aquí
-     * el manejo de autocommit.
-     */
-    @Override
-    public int depositar(String numero, BigDecimal monto) throws SQLException {
-        return ConexionBD.getInstancia().ejecutarTransaccion(con -> {
-            int cuentaId;
-            try (PreparedStatement ps = con.prepareStatement(
-                    "UPDATE cuenta SET saldo = saldo + ? WHERE numero = ? AND estado = ? RETURNING id")) {
-                ps.setBigDecimal(1, monto);
-                ps.setString(2, numero);
-                ps.setString(3, EstadoCuenta.ACTIVA);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next()) throw new SQLException("Cuenta no encontrada o no activa");
-                    cuentaId = rs.getInt(1);
-                }
-            }
-
-            int transaccionId;
-            try (PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO transaccion (cuenta_destino_id, tipo, monto) VALUES (?, 'DEPOSITO', ?)",
-                    new String[]{"id"})) {
-                ps.setInt(1, cuentaId);
-                ps.setBigDecimal(2, monto);
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    rs.next();
-                    transaccionId = rs.getInt(1);
-                }
-            }
-
-            return transaccionId;
-        });
     }
 }

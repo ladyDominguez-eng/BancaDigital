@@ -5,8 +5,7 @@ import { CajeroService } from '../../services/cajero';
 @Component({
   selector: 'app-depositos',
   imports: [FormsModule],
-  templateUrl: './depositos.html',
-  styleUrl: './depositos.css'
+  templateUrl: './depositos.html'
 })
 export class Depositos {
   private servicio = inject(CajeroService);
@@ -23,7 +22,7 @@ export class Depositos {
     }
     this.servicio.depositar(this.numeroCuenta.trim(), this.monto).subscribe({
       next: r => {
-        this.avisar(`${r.mensaje} Operación N° ${r.transaccionId}.`, false);
+        this.avisar(`${r.mensaje} Operación N° ${r.transaccionId}. Comprobante ${r.comprobante}.`, false);
         this.numeroCuenta = '';
         this.monto = null;
       },

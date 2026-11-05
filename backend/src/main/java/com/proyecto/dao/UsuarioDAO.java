@@ -52,6 +52,33 @@ public class UsuarioDAO implements IUsuarioDAO {
     }
 
     @Override
+    public Usuario buscarPorId(Long id) {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                "SELECT * FROM usuario WHERE id = ?")) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapear(rs) : null;
+            }
+        } catch (SQLException e) {
+            throw new AccesoDatosException("Error al buscar el usuario", e);
+        }
+    }
+
+    @Override
+    public boolean cambiarRol(Long id, String rol) {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                "UPDATE usuario SET rol = ? WHERE id = ?")) {
+            ps.setString(1, rol);
+            ps.setLong(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AccesoDatosException("Error al cambiar el rol del usuario", e);
+        }
+    }
+
+    @Override
     public List<Usuario> listarTodos() {
         Connection con = ConexionBD.getInstancia().getConexion();
         List<Usuario> lista = new ArrayList<>();

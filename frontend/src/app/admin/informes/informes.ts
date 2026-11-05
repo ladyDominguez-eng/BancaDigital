@@ -5,8 +5,7 @@ import { InformesService } from '../../services/informes';
 @Component({
   selector: 'app-informes',
   imports: [DecimalPipe],
-  templateUrl: './informes.html',
-  styleUrl: './informes.css'
+  templateUrl: './informes.html'
 })
 export class Informes implements OnInit {
 

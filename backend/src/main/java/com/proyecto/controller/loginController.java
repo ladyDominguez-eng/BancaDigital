@@ -1,10 +1,11 @@
 package com.proyecto.controller;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +16,10 @@ import com.proyecto.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*") // CAMBIO: permite cualquier origen (luego puedes poner la URL exacta del frontend)
+// CORS: antes permitía "*" (cualquier origen); ahora lo aplica CorsConfig solo a los orígenes del proyecto
 public class loginController {
+
+    private static final Logger log = LoggerFactory.getLogger(loginController.class);
 
     @Autowired
     private UsuarioService usuarioService;
@@ -27,7 +30,8 @@ public class loginController {
     //  El uso de <?> indica que el tipo de cuerpo de la respuesta puede ser cualquier cosa.
     public ResponseEntity<?> login(@RequestBody UsuarioRequest request) {
 
-        System.out.println("🔥 LLEGÓ AL LOGIN: " + request.getUsername());
+        // Registro con logger (no System.out) y sin datos sensibles
+        log.info("Intento de inicio de sesión del usuario {}", request.getUsername());
 
         boolean valido = usuarioService.validarUsuario(
             request.getUsername(),

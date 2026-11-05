@@ -1,13 +1,25 @@
 package com.proyecto.dao;
 
 import com.proyecto.model.Usuario;
-import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Contrato de acceso a datos de la entidad Usuario.
+ *
+ * PRINCIPIO: D de SOLID (Inversión de Dependencias).
+ * PROBLEMA: UsuarioService y la DAOFactory dependían de la clase concreta
+ *           UsuarioDAO (JDBC). Esta interfaz además estaba desactualizada:
+ *           sus firmas no coincidían con las de UsuarioDAO, que ni siquiera
+ *           la implementaba.
+ * SOLUCIÓN: la interfaz refleja las operaciones reales y UsuarioDAO la
+ *           implementa. Los servicios dependen de este contrato, no de JDBC.
+ * BENEFICIO: se puede cambiar o simular la persistencia sin tocar el
+ *            servicio.
+ */
 public interface IUsuarioDAO {
-    Usuario buscarPorUsername(String username) throws SQLException;
-    List<Usuario> listar() throws SQLException;
-    int crear(String username, String passwordHash, String rol) throws SQLException;
-    boolean actualizarRol(int id, String rol) throws SQLException;
-    boolean cambiarEstado(int id, boolean activo) throws SQLException;
+    Usuario buscarPorUsername(String username);
+    List<Usuario> listarTodos();
+    Usuario crear(Usuario usuario);
+    boolean cambiarEstado(Long id, boolean activo);
+    boolean actualizarPasswordHash(Long id, String nuevoHash);
 }

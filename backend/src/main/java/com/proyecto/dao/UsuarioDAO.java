@@ -1,115 +1,118 @@
 package com.proyecto.dao;
 
 import com.proyecto.model.Usuario;
+import com.proyecto.util.AccesoDatosException;
 import com.proyecto.util.ConexionBD;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-@Repository 
-public class UsuarioDAO {
 
-    private Connection conexion;
+/**
+ * DAO de Usuario (JDBC con PreparedStatement).
+ *
+ * CORRECCIONES DE ESTA VERSIÓN
+ * - Copiar y pegar: el mapeo de una fila a Usuario estaba repetido 3 veces;
+ *   ahora vive en un solo método (mapear).
+ * - Errores tragados: antes se hacía printStackTrace y se devolvía
+ *   null/false; ahora se lanza AccesoDatosException.
+ * - Conexión: antes se guardaba la conexión en el constructor, así que si
+ *   se caía quedaba inútil. Ahora se pide a ConexionBD en cada operación y
+ *   así aprovecha la reconexión del Singleton.
+ * - Recursos: PreparedStatement y ResultSet se cierran con
+ *   try-with-resources.
+ */
+@Repository
+public class UsuarioDAO implements IUsuarioDAO {
 
-    public UsuarioDAO() {
-        this.conexion = ConexionBD.getInstancia().getConexion();
+    // Un solo lugar que convierte una fila SQL en un objeto Usuario
+    private Usuario mapear(ResultSet rs) throws SQLException {
+        Usuario u = new Usuario();
+        u.setId(rs.getLong("id"));
+        u.setUsername(rs.getString("username"));
+        u.setPasswordHash(rs.getString("password_hash"));
+        u.setRol(rs.getString("rol"));
+        u.setActivo(rs.getBoolean("activo"));
+        return u;
     }
 
+    @Override
     public Usuario buscarPorUsername(String username) {
-        try {
-            PreparedStatement ps = conexion.prepareStatement(
-                "SELECT * FROM usuario WHERE username = ?"
-            );
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                "SELECT * FROM usuario WHERE username = ?")) {
             ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                Usuario u = new Usuario();
-                u.setId(rs.getLong("id"));
-                u.setUsername(rs.getString("username"));
-                u.setPasswordHash(rs.getString("password_hash"));
-                u.setRol(rs.getString("rol"));
-                u.setActivo(rs.getBoolean("activo"));
-                return u;
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapear(rs) : null;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new AccesoDatosException("Error al buscar el usuario", e);
         }
-        return null;
     }
 
+    @Override
     public List<Usuario> listarTodos() {
+        Connection con = ConexionBD.getInstancia().getConexion();
         List<Usuario> lista = new ArrayList<>();
-        try {
-            PreparedStatement ps = conexion.prepareStatement("SELECT * FROM usuario");
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM usuario");
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Usuario u = new Usuario();
-                u.setId(rs.getLong("id"));
-                u.setUsername(rs.getString("username"));
-                u.setPasswordHash(rs.getString("password_hash"));
-                u.setRol(rs.getString("rol"));
-                u.setActivo(rs.getBoolean("activo"));
-                lista.add(u);
+                lista.add(mapear(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new AccesoDatosException("Error al listar los usuarios", e);
         }
         return lista;
     }
 
+    @Override
     public Usuario crear(Usuario usuario) {
-    String sql = """
-        INSERT INTO usuario (username, password_hash, rol, activo)
-        VALUES (?, ?, ?, true)
-        RETURNING id, username, password_hash, rol, activo
-        """;
+        String sql = """
+            INSERT INTO usuario (username, password_hash, rol, activo)
+            VALUES (?, ?, ?, true)
+            RETURNING id, username, password_hash, rol, activo
+            """;
 
-    try {
-        PreparedStatement ps = conexion.prepareStatement(sql);
-
-        ps.setString(1, usuario.getUsername());
-        ps.setString(2, usuario.getPasswordHash());
-        ps.setString(3, usuario.getRol());
-
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            Usuario nuevo = new Usuario();
-
-            nuevo.setId(rs.getLong("id"));
-            nuevo.setUsername(rs.getString("username"));
-            nuevo.setPasswordHash(rs.getString("password_hash"));
-            nuevo.setRol(rs.getString("rol"));
-            nuevo.setActivo(rs.getBoolean("activo"));
-
-            return nuevo;
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return null;
-}
-// 🔄 Cambiar estado (activar/desactivar)
-    public boolean cambiarEstado(Long id, boolean activo) {
-        String sql = "UPDATE usuario SET activo = ? WHERE id = ?";
-
-        try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
-            ps.setBoolean(1, activo); // 🟢 Nuevo estado
-            ps.setLong(2, id);        // 🆔 ID del usuario
-
-            int filas = ps.executeUpdate(); // 📌 Ejecuta actualización
-
-            return filas > 0; // ✅ True si se actualizó al menos una fila
-
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario.getUsername());
+            ps.setString(2, usuario.getPasswordHash());
+            ps.setString(3, usuario.getRol());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? mapear(rs) : null;
+            }
         } catch (SQLException e) {
-            e.printStackTrace(); // ⚠️ Error SQL
-            return false;
+            throw new AccesoDatosException("Error al crear el usuario", e);
         }
     }
 
+    // Reemplaza el hash guardado (se usa para fortalecer hashes antiguos)
+    @Override
+    public boolean actualizarPasswordHash(Long id, String nuevoHash) {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                "UPDATE usuario SET password_hash = ? WHERE id = ?")) {
+            ps.setString(1, nuevoHash);
+            ps.setLong(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AccesoDatosException("Error al actualizar la contraseña", e);
+        }
+    }
+
+    // Cambiar estado (activar/desactivar)
+    @Override
+    public boolean cambiarEstado(Long id, boolean activo) {
+        Connection con = ConexionBD.getInstancia().getConexion();
+        try (PreparedStatement ps = con.prepareStatement(
+                "UPDATE usuario SET activo = ? WHERE id = ?")) {
+            ps.setBoolean(1, activo);
+            ps.setLong(2, id);
+            // true si se actualizó al menos una fila
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new AccesoDatosException("Error al cambiar el estado del usuario", e);
+        }
+    }
 }

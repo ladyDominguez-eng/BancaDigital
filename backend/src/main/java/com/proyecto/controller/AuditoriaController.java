@@ -1,23 +1,21 @@
 package com.proyecto.controller;
 
 import com.proyecto.dao.IBitacoraDAO;
-import com.proyecto.model.Bitacora;
 import com.proyecto.service.AuditoriaService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.List;
 
+/**
+ * GRASP Controlador: convierte los parámetros y delega en el Service.
+ * Errores y CORS centralizados en ManejadorErrores y CorsConfig. Una fecha
+ * con formato inválido ahora responde 400 (antes respondía 500).
+ */
 @RestController
 @RequestMapping("/api/auditoria")
-
-@CrossOrigin(origins = {
-    "http://localhost:4200",
-    "https://bancadigital-frontend.onrender.com"
-})
-
 public class AuditoriaController {
 
     private final AuditoriaService service;
@@ -31,27 +29,16 @@ public class AuditoriaController {
             @RequestParam(required = false) Integer usuarioId,
             @RequestParam(required = false) String fechaDesde,
             @RequestParam(required = false) String fechaHasta
-    ) {
+    ) throws SQLException {
 
-        try {
+        LocalDate desde = fechaDesde != null && !fechaDesde.isBlank()
+                ? LocalDate.parse(fechaDesde)
+                : null;
 
-            LocalDate desde = fechaDesde != null && !fechaDesde.isBlank()
-                    ? LocalDate.parse(fechaDesde)
-                    : null;
+        LocalDate hasta = fechaHasta != null && !fechaHasta.isBlank()
+                ? LocalDate.parse(fechaHasta)
+                : null;
 
-            LocalDate hasta = fechaHasta != null && !fechaHasta.isBlank()
-                    ? LocalDate.parse(fechaHasta)
-                    : null;
-
-            List<Bitacora> lista =
-                    service.listar(usuarioId, desde, hasta);
-
-            return ResponseEntity.ok(lista);
-
-        } catch (Exception e) {
-
-            return ResponseEntity.internalServerError()
-                    .body("Error al obtener la auditoría.");
-        }
+        return ResponseEntity.ok(service.listar(usuarioId, desde, hasta));
     }
 }

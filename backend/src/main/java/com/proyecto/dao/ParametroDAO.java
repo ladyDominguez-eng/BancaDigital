@@ -10,8 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParametroDAO {
+public class ParametroDAO implements IParametroDAO {
 
+    @Override
     public List<Parametro> listar() throws SQLException {
 
         Connection con = ConexionBD.getInstancia().getConexion();
@@ -40,6 +41,32 @@ public class ParametroDAO {
         return lista;
     }
 
+    @Override
+    public Parametro buscarPorNombre(String nombre) throws SQLException {
+
+        Connection con = ConexionBD.getInstancia().getConexion();
+
+        try (PreparedStatement ps = con.prepareStatement(
+                "SELECT id, nombre, valor, descripcion " +
+                "FROM parametro_sistema WHERE nombre = ?")) {
+
+            ps.setString(1, nombre);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                Parametro p = new Parametro();
+                p.setId(rs.getLong("id"));
+                p.setNombre(rs.getString("nombre"));
+                p.setValor(rs.getString("valor"));
+                p.setDescripcion(rs.getString("descripcion"));
+                return p;
+            }
+        }
+    }
+
+    @Override
     public boolean actualizarValor(Long id, String valor) throws SQLException {
 
         Connection con = ConexionBD.getInstancia().getConexion();

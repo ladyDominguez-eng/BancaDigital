@@ -3,6 +3,7 @@ package com.proyecto.service;
 import com.proyecto.dao.ICuentaDAO;
 import com.proyecto.dao.factory.DAOFactory;
 import com.proyecto.model.Cuenta;
+import com.proyecto.model.EstadoCuenta;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,9 +11,15 @@ import java.util.List;
 
 public class CajeroService {
 
-    // LÍMITE: depósito máximo permitido
-    private static final BigDecimal MONTO_MAXIMO_DEPOSITO =
+    // LÍMITE: el administrador lo configura en la tabla parametro_sistema
+    // (RF-03) con este nombre. PROBLEMA: antes el 50 000 estaba fijo en el
+    // código y cambiarlo exigía recompilar y desplegar. Si el parámetro no
+    // existe se usa el valor por defecto de siempre, así nada se rompe.
+    private static final String PARAM_LIMITE_DEPOSITO = "LIMITE_DEPOSITO";
+    private static final BigDecimal LIMITE_DEPOSITO_POR_DEFECTO =
             new BigDecimal("50000.00");
+
+    private final ParametroService parametros = new ParametroService();
 
     // FACTORY: obtiene el DAO de cuentas mediante su interfaz
     private final ICuentaDAO dao = DAOFactory.crearCuentaDAO();
@@ -63,7 +70,10 @@ public class CajeroService {
         }
 
         // VALIDACIÓN: respeta el límite máximo
-        if (monto.compareTo(MONTO_MAXIMO_DEPOSITO) > 0) {
+        BigDecimal limite = parametros.obtenerNumero(
+                PARAM_LIMITE_DEPOSITO, LIMITE_DEPOSITO_POR_DEFECTO);
+
+        if (monto.compareTo(limite) > 0) {
             throw new IllegalArgumentException(
                     "El monto supera el máximo permitido.");
         }
@@ -76,7 +86,7 @@ public class CajeroService {
             throw new IllegalArgumentException("La cuenta no existe.");
 
         // VALIDACIÓN: cuenta activa
-        if (!"ACTIVA".equals(c.getEstado()))
+        if (!EstadoCuenta.ACTIVA.equals(c.getEstado()))
             throw new IllegalArgumentException(
                     "La cuenta no está activa.");
 

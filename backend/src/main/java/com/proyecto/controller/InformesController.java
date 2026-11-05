@@ -1,65 +1,34 @@
 package com.proyecto.controller;
 
-import com.proyecto.model.InformesCuentas;
 import com.proyecto.service.InformesService;
+
+import java.sql.SQLException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * GRASP Controlador: delega en el Service. Errores y CORS centralizados
+ * en ManejadorErrores y CorsConfig.
+ */
 @RestController
 @RequestMapping("/api/informes")
-
-@CrossOrigin(origins = {
-    "http://localhost:4200",
-    "https://bancadigital-frontend.onrender.com"
-})
-
 public class InformesController {
 
     private final InformesService service = new InformesService();
 
     @GetMapping("/usuarios")
-    public ResponseEntity<?> usuariosPorRol() {
-
-        try {
-            return ResponseEntity.ok(
-                service.obtenerUsuariosPorRol()
-            );
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Error al obtener informe de usuarios.");
-        }
+    public ResponseEntity<?> usuariosPorRol() throws SQLException {
+        return ResponseEntity.ok(service.obtenerUsuariosPorRol());
     }
-
 
     @GetMapping("/cuentas")
-    public ResponseEntity<?> resumenCuentas() {
-
-        try {
-            InformesCuentas informe =
-                service.obtenerResumenCuentas();
-
-            return ResponseEntity.ok(informe);
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Error al obtener informe de cuentas.");
-        }
+    public ResponseEntity<?> resumenCuentas() throws SQLException {
+        return ResponseEntity.ok(service.obtenerResumenCuentas());
     }
 
-
     @GetMapping("/transacciones")
-    public ResponseEntity<?> transaccionesPorTipo() {
-
-        try {
-            return ResponseEntity.ok(
-                service.obtenerTransaccionesPorTipo()
-            );
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Error al obtener informe de transacciones.");
-        }
+    public ResponseEntity<?> transaccionesPorTipo() throws SQLException {
+        return ResponseEntity.ok(service.obtenerTransaccionesPorTipo());
     }
 }

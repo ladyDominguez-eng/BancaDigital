@@ -1,79 +1,59 @@
-<h1 class="page-title">Informes</h1>
+<header class="pagina-cabecera">
+  <h1>Informes</h1>
+  <p class="pagina-ayuda">Resumen general del banco: clientes, cuentas, saldo, usuarios por rol y movimientos por tipo de operación.</p>
+</header>
 
-<!-- RESUMEN -->
-<section class="resumen">
-
-  <div class="tarjeta">
-    <span class="titulo">Usuarios registrados</span>
+<section class="tarjeta resumen" aria-label="Resumen general">
+  <div>
+    <span>Clientes registrados</span>
     <strong>{{ cuentas().totalClientes }}</strong>
-    <small>Clientes</small>
   </div>
-
-  <div class="tarjeta">
-    <span class="titulo">Cuentas</span>
+  <div>
+    <span>Cuentas abiertas</span>
     <strong>{{ cuentas().totalCuentas }}</strong>
-    <small>Cuentas registradas</small>
   </div>
-
-  <div class="tarjeta">
-    <span class="titulo">Saldo total</span>
+  <div>
+    <span>Saldo total</span>
     <strong>S/ {{ cuentas().saldoTotal | number:'1.2-2' }}</strong>
-    <small>Saldo bancario</small>
   </div>
-
 </section>
 
-<!-- USUARIOS POR ROL -->
-<section class="panel">
-
+<section class="tarjeta">
   <h2>Usuarios por rol</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Rol</th>
-        <th>Total</th>
-        <th>Activos</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      @for (u of usuarios(); track u.rol) {
-        <tr>
-          <td>{{ u.rol }}</td>
-          <td>{{ u.total }}</td>
-          <td>{{ u.activos }}</td>
-        </tr>
-      }
-    </tbody>
-  </table>
-
+  <div class="tabla-caja">
+    <table class="tabla">
+      <thead>
+        <tr><th>Rol</th><th class="num">Total</th><th class="num">Activos</th></tr>
+      </thead>
+      <tbody>
+        @for (u of usuarios(); track u.rol) {
+          <tr>
+            <td>{{ u.rol }}</td>
+            <td class="num">{{ u.total }}</td>
+            <td class="num">{{ u.activos }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </section>
 
-<!-- TRANSACCIONES -->
-<section class="panel">
-
+<section class="tarjeta">
   <h2>Transacciones por tipo</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Tipo</th>
-        <th>Cantidad</th>
-        <th>Monto total</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      @for (t of transacciones(); track t.tipo) {
-        <tr>
-          <td>{{ t.tipo }}</td>
-          <td>{{ t.cantidad }}</td>
-          <td>S/ {{ t.montoTotal | number:'1.2-2' }}</td>
-        </tr>
-      }
-    </tbody>
-  </table>
-
+  <div class="tabla-caja">
+    <table class="tabla">
+      <thead>
+        <tr><th>Tipo</th><th class="num">Cantidad</th><th class="num">Monto total</th></tr>
+      </thead>
+      <tbody>
+        @for (t of transacciones(); track t.tipo) {
+          <tr>
+            <td>{{ t.tipo }}</td>
+            <td class="num">{{ t.cantidad }}</td>
+            <td class="num">S/ {{ t.montoTotal | number:'1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </section>
-

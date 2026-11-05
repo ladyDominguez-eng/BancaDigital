@@ -5,20 +5,21 @@ import { AuthService } from '../../services/auth';
 interface Enlace { ruta: string; texto: string; }
 
 /**
- * Barra superior + contenido, reutilizable por cualquier rol.
+ * Marco de la aplicación (barra lateral + contenido), común a los 5 roles.
  *
- * PROBLEMA: los paneles de Admin y Cajero copiaron el mismo HTML y CSS de la
- *           barra superior; hacerlo otra vez para Cliente, Asesor y Auditor
- *           triplicaría el código repetido.
+ * PROBLEMA: los paneles de Admin y Cajero tenían cada uno su propio HTML y
+ *           CSS de la barra (más de 360 líneas repetidas) y se veían distinto
+ *           al resto; Cliente, Asesor y Auditor usaban otro. Una persona que
+ *           cambia de rol veía "otra aplicación".
  * SOLUCIÓN: un solo componente que recibe del enrutador (route data) el
  *           título del rol y sus enlaces. Agregar un rol nuevo es solo
- *           declarar su ruta, sin tocar este componente.
+ *           declarar su ruta, sin tocar este componente (O de SOLID). Los
+ *           estilos viven en src/styles.css (.app-marco, .lateral).
  */
 @Component({
   selector: 'app-panel-rol',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './panel-rol.html',
-  styleUrl: './panel-rol.css'
+  templateUrl: './panel-rol.html'
 })
 export class PanelRol {
   private auth = inject(AuthService);

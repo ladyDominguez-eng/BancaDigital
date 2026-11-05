@@ -1,21 +1,26 @@
-<h1 class="vista-titulo">Registrar retiros</h1>
+<header class="pagina-cabecera">
+  <h1>Registrar retiro</h1>
+  <p class="pagina-ayuda">Ingresa el número de cuenta y el monto a entregar. El sistema valida el saldo disponible antes de confirmar.</p>
+</header>
 
 @if (mensaje()) {
-  <p class="vista-aviso" [class.error]="esError()">{{ mensaje() }}</p>
+  <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
 }
 
-<section class="vista-panel">
-  <form class="vista-form" (ngSubmit)="retirar()">
-    <div class="vista-campo">
-      <label for="cuenta">Número de cuenta</label>
-      <input id="cuenta" name="cuenta" type="text" [(ngModel)]="numeroCuenta" placeholder="Ej: 001-0000010" autocomplete="off">
+<section class="tarjeta">
+  <form class="formulario" (ngSubmit)="retirar()">
+    <div class="campos">
+      <div class="campo">
+        <label for="cuenta">Número de cuenta</label>
+        <input id="cuenta" name="cuenta" type="text" [(ngModel)]="numeroCuenta" placeholder="Ej: 001-0000010" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="monto">Monto (S/)</label>
+        <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="0.00">
+      </div>
     </div>
-
-    <div class="vista-campo">
-      <label for="monto">Monto (S/)</label>
-      <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="0.00">
+    <div class="acciones">
+      <button type="submit" class="btn">Registrar retiro</button>
     </div>
-
-    <button type="submit" class="vista-btn">Retirar</button>
   </form>
 </section>

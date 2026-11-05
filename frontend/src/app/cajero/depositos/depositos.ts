@@ -5,8 +5,7 @@ import { CajeroService } from '../../services/cajero';
 @Component({
   selector: 'app-depositos',
   imports: [FormsModule],
-  templateUrl: './depositos.html',
-  styleUrl: './depositos.css'
+  templateUrl: './depositos.html'
 })
 export class Depositos {
   private servicio = inject(CajeroService);

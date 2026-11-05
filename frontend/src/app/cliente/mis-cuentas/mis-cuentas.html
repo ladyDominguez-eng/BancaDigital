@@ -1,40 +1,47 @@
-<h1 class="vista-titulo">Mis cuentas</h1>
+<header class="pagina-cabecera">
+  <h1>Mis cuentas</h1>
+  <p class="pagina-ayuda">Consulta tu saldo y elige una cuenta para ver sus movimientos.</p>
+</header>
 
 @if (mensaje()) {
-  <p class="vista-aviso error">{{ mensaje() }}</p>
+  <p class="aviso error" role="alert">{{ mensaje() }}</p>
 }
 
 @if (cuentas().length === 0 && !mensaje()) {
-  <p class="vista-vacio">No tienes cuentas registradas.</p>
+  <section class="tarjeta">
+    <p class="vacio"><strong>Aún no tienes cuentas registradas.</strong>Acércate a una agencia para abrir tu primera cuenta.</p>
+  </section>
 }
 
-<div class="vista-tarjetas">
+<div class="cuentas-grid">
   @for (c of cuentas(); track c.id) {
-    <button type="button" class="vista-tarjeta" [class.activa]="seleccionada()?.id === c.id" (click)="seleccionar(c)">
-      <small>{{ c.tipo }} · {{ c.numero }}</small>
-      <div class="saldo">S/ {{ c.saldo | number:'1.2-2' }}</div>
-      <small>Disponible: S/ {{ c.saldoDisponible | number:'1.2-2' }}</small>
-      <span class="vista-etiqueta" [class]="'vista-etiqueta ' + c.estado">{{ c.estado }}</span>
+    <button type="button" class="cuenta-tarjeta" [class.activa]="seleccionada()?.id === c.id"
+            [attr.aria-pressed]="seleccionada()?.id === c.id" (click)="seleccionar(c)">
+      <span class="tipo">{{ c.tipo }}</span>
+      <span class="numero">{{ c.numero }}</span>
+      <span class="saldo">S/ {{ c.saldo | number:'1.2-2' }}</span>
+      <span class="disponible">Disponible: S/ {{ c.saldoDisponible | number:'1.2-2' }}</span>
+      <span [class]="'etiqueta ' + c.estado">{{ c.estado }}</span>
     </button>
   }
 </div>
 
 @if (seleccionada(); as c) {
-  <section class="vista-panel">
+  <section class="tarjeta">
     <h2>Movimientos de la cuenta {{ c.numero }}</h2>
 
     @if (movimientos().length === 0) {
-      <p class="vista-vacio">Esta cuenta todavía no tiene movimientos.</p>
+      <p class="vacio"><strong>Sin movimientos todavía.</strong>Cuando hagas una transferencia o un pago aparecerá aquí.</p>
     } @else {
-      <div class="vista-tabla-caja">
-        <table class="vista-tabla">
+      <div class="tabla-caja">
+        <table class="tabla">
           <thead>
             <tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th class="num">Monto</th><th>Comprobante</th></tr>
           </thead>
           <tbody>
             @for (m of movimientos(); track m.id) {
               <tr>
-                <td>{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="mono">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td>{{ m.tipo }}</td>
                 <td>
                   @if (m.cuentaOrigen && m.cuentaDestino) {
@@ -44,7 +51,7 @@
                   }
                 </td>
                 <td class="num">{{ esSalida(m) ? '−' : '+' }} S/ {{ m.monto | number:'1.2-2' }}</td>
-                <td>{{ m.comprobante }}</td>
+                <td class="mono">{{ m.comprobante }}</td>
               </tr>
             }
           </tbody>

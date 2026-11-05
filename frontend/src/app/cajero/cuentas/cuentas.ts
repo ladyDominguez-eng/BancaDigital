@@ -6,8 +6,7 @@ import { CajeroService, CuentaDto } from '../../services/cajero';
 @Component({
   selector: 'app-cuentas',
   imports: [FormsModule, DecimalPipe],
-  templateUrl: './cuentas.html',
-  styleUrl: './cuentas.css'
+  templateUrl: './cuentas.html'
 })
 export class Cuentas {
   private servicio = inject(CajeroService);

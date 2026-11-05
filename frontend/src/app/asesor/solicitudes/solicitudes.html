@@ -1,9 +1,12 @@
-<h1 class="vista-titulo">Solicitudes de crédito</h1>
+<header class="pagina-cabecera">
+  <h1>Solicitudes de crédito</h1>
+  <p class="pagina-ayuda">Revisa las solicitudes de los clientes: primero evalúalas y luego apruébalas o recházalas con una observación.</p>
+</header>
 
-<section class="vista-panel">
-  <div class="vista-form">
-    <div class="vista-campo">
-      <label for="estado">Estado</label>
+<section class="tarjeta">
+  <div class="filtros">
+    <div class="campo">
+      <label for="estado">Filtrar por estado</label>
       <select id="estado" [(ngModel)]="filtro" (ngModelChange)="cargar()">
         <option value="">Todos</option>
         @for (e of estados; track e) {
@@ -11,16 +14,19 @@
         }
       </select>
     </div>
-    <button type="button" class="vista-btn secundario" (click)="cargar()">Actualizar</button>
+    <div class="acciones">
+      <button type="button" class="btn secundario" (click)="cargar()">Actualizar</button>
+    </div>
   </div>
 </section>
 
-<section class="vista-panel">
+<section class="tarjeta">
+  <h2>Solicitudes ({{ solicitudes().length }})</h2>
   @if (solicitudes().length === 0) {
-    <p class="vista-vacio">No hay solicitudes con ese filtro.</p>
+    <p class="vacio"><strong>No hay solicitudes con ese filtro.</strong>Cambia el estado para ver otras.</p>
   } @else {
-    <div class="vista-tabla-caja">
-      <table class="vista-tabla">
+    <div class="tabla-caja">
+      <table class="tabla">
         <thead>
           <tr><th>N°</th><th>Fecha</th><th>Cliente</th><th>DNI</th><th class="num">Monto</th><th>Plazo</th><th>Estado</th><th></th></tr>
         </thead>
@@ -28,13 +34,13 @@
           @for (s of solicitudes(); track s.id) {
             <tr>
               <td>{{ s.id }}</td>
-              <td>{{ s.fecha | date:'dd/MM/yyyy' }}</td>
+              <td class="mono">{{ s.fecha | date:'dd/MM/yyyy' }}</td>
               <td>{{ s.clienteNombre }}</td>
-              <td>{{ s.clienteDni }}</td>
+              <td class="mono">{{ s.clienteDni }}</td>
               <td class="num">S/ {{ s.monto | number:'1.2-2' }}</td>
-              <td>{{ s.plazoMeses }} m</td>
-              <td><span [class]="'vista-etiqueta ' + s.estado">{{ s.estado }}</span></td>
-              <td><button type="button" class="vista-btn chico" (click)="abrir(s)">Revisar</button></td>
+              <td>{{ s.plazoMeses }} meses</td>
+              <td><span [class]="'etiqueta ' + s.estado">{{ s.estado }}</span></td>
+              <td class="num"><button type="button" class="btn secundario chico" (click)="abrir(s)">Revisar</button></td>
             </tr>
           }
         </tbody>
@@ -44,63 +50,76 @@
 </section>
 
 @if (seleccionada(); as s) {
-  <section class="vista-panel">
+  <section class="tarjeta">
     <h2>Solicitud N° {{ s.id }} · {{ s.clienteNombre }}</h2>
 
     @if (mensaje()) {
-      <p class="vista-aviso" [class.error]="esError()">{{ mensaje() }}</p>
+      <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
     }
 
-    <p>
-      Monto S/ {{ s.monto | number:'1.2-2' }} a {{ s.plazoMeses }} meses ·
-      cuota estimada S/ {{ s.cuotaMensual | number:'1.2-2' }} ·
-      estado <span [class]="'vista-etiqueta ' + s.estado">{{ s.estado }}</span>
-    </p>
+    <dl class="datos">
+      <dt>Monto</dt><dd>S/ {{ s.monto | number:'1.2-2' }}</dd>
+      <dt>Plazo</dt><dd>{{ s.plazoMeses }} meses</dd>
+      <dt>Cuota estimada</dt><dd>S/ {{ s.cuotaMensual | number:'1.2-2' }}</dd>
+      <dt>Estado</dt><dd><span [class]="'etiqueta ' + s.estado">{{ s.estado }}</span></dd>
+    </dl>
 
-    <div class="vista-form" style="margin-top: 14px">
-      <div class="vista-campo" style="flex: 1; min-width: 280px">
-        <label for="obs">Observaciones (obligatorias para rechazar)</label>
+    <div class="campos ancho" style="margin-top: 24px">
+      <div class="campo">
+        <label for="obs">Observaciones</label>
         <textarea id="obs" rows="3" maxlength="255" [(ngModel)]="observaciones"></textarea>
+        <span class="ayuda">Obligatorias para rechazar la solicitud.</span>
       </div>
     </div>
 
-    <div class="vista-form" style="margin-top: 14px">
-      <button type="button" class="vista-btn" [disabled]="s.estado !== 'PENDIENTE'" (click)="evaluar()">Evaluar</button>
-      <button type="button" class="vista-btn" [disabled]="s.estado !== 'EN_EVALUACION'" (click)="aprobar()">Aprobar</button>
-      <button type="button" class="vista-btn peligro" [disabled]="s.estado !== 'EN_EVALUACION'" (click)="rechazar()">Rechazar</button>
-      <button type="button" class="vista-btn secundario" (click)="guardarObservacion()">Guardar observación</button>
+    <!-- Una sola acción principal a la vez: la que corresponde al estado actual -->
+    <div class="acciones">
+      <button type="button" class="btn" [disabled]="s.estado !== 'PENDIENTE'" (click)="evaluar()">Evaluar</button>
+      <button type="button" class="btn" [disabled]="s.estado !== 'EN_EVALUACION'" (click)="aprobar()">Aprobar</button>
+      <button type="button" class="btn peligro" [disabled]="s.estado !== 'EN_EVALUACION'" (click)="rechazar()">Rechazar</button>
+      <button type="button" class="btn secundario" (click)="guardarObservacion()">Guardar observación</button>
     </div>
   </section>
 
-  <section class="vista-panel">
+  <section class="tarjeta">
     <h2>Historial financiero de {{ s.clienteNombre }}</h2>
 
     @if (historial(); as h) {
-      <h3 style="color: var(--text-dim); font-weight: 500">Solicitudes de crédito</h3>
+      <h3>Solicitudes de crédito</h3>
       @if (h.solicitudes.length === 0) {
-        <p class="vista-vacio">Sin solicitudes.</p>
+        <p class="vacio">Sin solicitudes anteriores.</p>
       } @else {
-        <ul>
-          @for (x of h.solicitudes; track x.id) {
-            <li>N° {{ x.id }} · S/ {{ x.monto | number:'1.2-2' }} · {{ x.estado }} · {{ x.fecha | date:'dd/MM/yyyy' }}</li>
-          }
-        </ul>
+        <div class="tabla-caja">
+          <table class="tabla">
+            <thead><tr><th>N°</th><th>Fecha</th><th class="num">Monto</th><th>Estado</th></tr></thead>
+            <tbody>
+              @for (x of h.solicitudes; track x.id) {
+                <tr>
+                  <td>{{ x.id }}</td>
+                  <td class="mono">{{ x.fecha | date:'dd/MM/yyyy' }}</td>
+                  <td class="num">S/ {{ x.monto | number:'1.2-2' }}</td>
+                  <td><span [class]="'etiqueta ' + x.estado">{{ x.estado }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
 
-      <h3 style="color: var(--text-dim); font-weight: 500">Últimos movimientos</h3>
+      <h3>Últimos movimientos</h3>
       @if (h.movimientos.length === 0) {
-        <p class="vista-vacio">Sin movimientos.</p>
+        <p class="vacio">Sin movimientos registrados.</p>
       } @else {
-        <div class="vista-tabla-caja">
-          <table class="vista-tabla">
+        <div class="tabla-caja">
+          <table class="tabla">
             <thead><tr><th>Fecha</th><th>Tipo</th><th class="num">Monto</th><th>Comprobante</th></tr></thead>
             <tbody>
               @for (m of h.movimientos; track m.id) {
                 <tr>
-                  <td>{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td class="mono">{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
                   <td>{{ m.tipo }}</td>
                   <td class="num">S/ {{ m.monto | number:'1.2-2' }}</td>
-                  <td>{{ m.comprobante }}</td>
+                  <td class="mono">{{ m.comprobante }}</td>
                 </tr>
               }
             </tbody>
@@ -108,7 +127,7 @@
         </div>
       }
     } @else {
-      <p class="vista-vacio">Cargando historial…</p>
+      <p class="vacio">Cargando historial…</p>
     }
   </section>
 }

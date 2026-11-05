@@ -1,39 +1,43 @@
-<h1 class="vista-titulo">Transferir</h1>
+<header class="pagina-cabecera">
+  <h1>Transferir</h1>
+  <p class="pagina-ayuda">Envía dinero a otra cuenta del banco. Revisa bien el número de destino: una transferencia no se puede deshacer.</p>
+</header>
 
 @if (mensaje()) {
-  <p class="vista-aviso error">{{ mensaje() }}</p>
+  <p class="aviso error" role="alert">{{ mensaje() }}</p>
 }
 
 @if (comprobante(); as t) {
-  <div class="vista-comprobante" role="status">
-    <p class="vista-aviso">Transferencia realizada.</p>
-    <p>Comprobante <strong>{{ t.comprobante }}</strong></p>
-    <p>{{ t.cuentaOrigen }} → {{ t.cuentaDestino }} · S/ {{ t.monto | number:'1.2-2' }}</p>
+  <div class="comprobante" role="status">
+    <p class="aviso">Transferencia realizada</p>
+    <p>Comprobante <span class="codigo">{{ t.comprobante }}</span></p>
+    <p>{{ t.cuentaOrigen }} → {{ t.cuentaDestino }} · <strong>S/ {{ t.monto | number:'1.2-2' }}</strong></p>
     <p>{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
   </div>
 }
 
-<section class="vista-panel">
-  <form class="vista-form" (ngSubmit)="transferir()">
-    <div class="vista-campo">
-      <label for="origen">Desde mi cuenta</label>
-      <select id="origen" name="origen" [(ngModel)]="cuentaOrigenId">
-        @for (c of cuentas(); track c.id) {
-          <option [ngValue]="c.id">{{ c.numero }} · S/ {{ c.saldoDisponible | number:'1.2-2' }} disponibles</option>
-        }
-      </select>
+<section class="tarjeta">
+  <form class="formulario" (ngSubmit)="transferir()">
+    <div class="campos">
+      <div class="campo completo">
+        <label for="origen">Desde mi cuenta</label>
+        <select id="origen" name="origen" [(ngModel)]="cuentaOrigenId">
+          @for (c of cuentas(); track c.id) {
+            <option [ngValue]="c.id">{{ c.numero }} · S/ {{ c.saldoDisponible | number:'1.2-2' }} disponibles</option>
+          }
+        </select>
+      </div>
+      <div class="campo">
+        <label for="destino">Cuenta de destino</label>
+        <input id="destino" name="destino" type="text" [(ngModel)]="numeroDestino" placeholder="Ej: 001-0000010" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="monto">Monto (S/)</label>
+        <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="0.00">
+      </div>
     </div>
-
-    <div class="vista-campo">
-      <label for="destino">Cuenta de destino</label>
-      <input id="destino" name="destino" type="text" [(ngModel)]="numeroDestino" placeholder="Ej: 001-0000010" autocomplete="off">
+    <div class="acciones">
+      <button type="submit" class="btn" [disabled]="enviando()">{{ enviando() ? 'Transfiriendo…' : 'Transferir' }}</button>
     </div>
-
-    <div class="vista-campo">
-      <label for="monto">Monto (S/)</label>
-      <input id="monto" name="monto" type="number" min="0" step="0.01" [(ngModel)]="monto" placeholder="0.00">
-    </div>
-
-    <button type="submit" class="vista-btn" [disabled]="enviando()">Transferir</button>
   </form>
 </section>

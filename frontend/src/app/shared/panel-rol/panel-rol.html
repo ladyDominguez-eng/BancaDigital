@@ -1,26 +1,30 @@
-<header class="topbar">
-  <div class="topbar-brand">
-    <div class="logo" aria-hidden="true">
-      <span class="logo-inner"></span>
+<div class="app-marco">
+  <aside class="lateral">
+    <div class="lateral-marca">
+      <div class="lateral-logo" aria-hidden="true"><span></span></div>
+      <div class="lateral-nombre">
+        <strong>Banca Digital</strong>
+        <span>{{ titulo }}</span>
+      </div>
     </div>
-    <div class="brand-text">
-      <span class="brand-name">Banca Digital</span>
-      <span class="brand-role">• {{ titulo }}</span>
+
+    <nav class="lateral-nav" aria-label="Menú principal">
+      @for (e of enlaces; track e.ruta) {
+        <a [routerLink]="e.ruta" routerLinkActive="active">{{ e.texto }}</a>
+      }
+    </nav>
+
+    <div class="lateral-pie">
+      @if (usuario) {
+        <span class="lateral-usuario">Sesión iniciada como <strong>{{ usuario }}</strong></span>
+      }
+      <button type="button" class="btn secundario" (click)="salir()">Cerrar sesión</button>
     </div>
-  </div>
+  </aside>
 
-  <nav class="topbar-nav">
-    @for (e of enlaces; track e.ruta) {
-      <a [routerLink]="e.ruta" routerLinkActive="active" class="nav-link">{{ e.texto }}</a>
-    }
-  </nav>
-
-  @if (usuario) {
-    <span class="usuario">{{ usuario }}</span>
-  }
-  <button type="button" class="btn-salir" (click)="salir()">Salir</button>
-</header>
-
-<main class="content">
-  <router-outlet></router-outlet>
-</main>
+  <main class="contenido">
+    <div class="contenido-interior">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

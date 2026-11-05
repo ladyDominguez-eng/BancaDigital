@@ -5,8 +5,7 @@ import { AuditoriaService, Bitacora } from '../../services/auditoria';
 @Component({
   selector: 'app-auditoria',
   imports: [DatePipe],
-  templateUrl: './auditoria.html',
-  styleUrl: './auditoria.css'
+  templateUrl: './auditoria.html'
 })
 export class Auditoria implements OnInit {
 

@@ -1,47 +1,36 @@
-<h1 class="page-title">Configurar parámetros</h1>
+<header class="pagina-cabecera">
+  <h1>Parámetros del sistema</h1>
+  <p class="pagina-ayuda">Cambia los límites y valores que usa el banco. Guarda cada fila por separado: el cambio se aplica de inmediato.</p>
+</header>
 
 @if (mensaje()) {
-  <p class="aviso" [class.error]="esError()">{{ mensaje() }}</p>
+  <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
 }
 
-<section class="panel table-panel">
-
-  <table class="tabla">
-
-    <thead>
-      <tr>
-        <th>Parámetro</th>
-        <th>Descripción</th>
-        <th>Valor</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      @for (p of parametros(); track p.id) {
-        <tr>
-          <td>{{ p.nombre }}</td>
-
-          <td>{{ p.descripcion }}</td>
-
-          <td>
-            <input
-              type="text"
-              [(ngModel)]="p.valor"
-              [name]="'valor' + p.id">
-          </td>
-
-          <td>
-            <button
-              type="button"
-              (click)="guardar(p)">
-              Guardar
-            </button>
-          </td>
-        </tr>
-      }
-    </tbody>
-
-  </table>
-
+<section class="tarjeta">
+  @if (parametros().length === 0) {
+    <p class="vacio"><strong>No hay parámetros configurados.</strong>Cuando se registren aparecerán aquí.</p>
+  } @else {
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead>
+          <tr><th>Parámetro</th><th>Descripción</th><th>Valor</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (p of parametros(); track p.id) {
+            <tr>
+              <td class="mono"><strong>{{ p.nombre }}</strong></td>
+              <td>{{ p.descripcion }}</td>
+              <td>
+                <input type="text" [(ngModel)]="p.valor" [name]="'valor' + p.id" [attr.aria-label]="'Valor de ' + p.nombre">
+              </td>
+              <td class="num">
+                <button type="button" class="btn chico" (click)="guardar(p)">Guardar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </section>

@@ -1,48 +1,49 @@
-<h1 class="vista-titulo">Transacciones</h1>
+<header class="pagina-cabecera">
+  <h1>Transacciones</h1>
+  <p class="pagina-ayuda">Revisa los movimientos del banco con filtros y expórtalos para la auditoría.</p>
+</header>
 
 @if (mensaje()) {
-  <p class="vista-aviso" [class.error]="esError()">{{ mensaje() }}</p>
+  <p class="aviso" [class.error]="esError()" [attr.role]="esError() ? 'alert' : 'status'">{{ mensaje() }}</p>
 }
 
-<section class="vista-panel">
+<section class="tarjeta">
   <h2>Filtros</h2>
-  <div class="vista-form">
-    <div class="vista-campo">
+  <form class="filtros" (ngSubmit)="buscar()">
+    <div class="campo">
       <label for="tipo">Tipo</label>
-      <select id="tipo" [(ngModel)]="tipo">
+      <select id="tipo" name="tipo" [(ngModel)]="tipo">
         <option value="">Todos</option>
         @for (t of tipos; track t) {
           <option [value]="t">{{ t }}</option>
         }
       </select>
     </div>
-
-    <div class="vista-campo">
+    <div class="campo">
       <label for="desde">Desde</label>
-      <input id="desde" type="date" [(ngModel)]="desde">
+      <input id="desde" name="desde" type="date" [(ngModel)]="desde">
     </div>
-
-    <div class="vista-campo">
+    <div class="campo">
       <label for="hasta">Hasta</label>
-      <input id="hasta" type="date" [(ngModel)]="hasta">
+      <input id="hasta" name="hasta" type="date" [(ngModel)]="hasta">
     </div>
-
-    <div class="vista-campo">
+    <div class="campo">
       <label for="min">Monto mínimo (S/)</label>
-      <input id="min" type="number" min="0" step="0.01" [(ngModel)]="montoMinimo" placeholder="0.00">
+      <input id="min" name="min" type="number" min="0" step="0.01" [(ngModel)]="montoMinimo" placeholder="0.00">
     </div>
-
-    <button type="button" class="vista-btn" (click)="buscar()">Buscar</button>
-    <button type="button" class="vista-btn secundario" (click)="limpiar()">Limpiar</button>
-  </div>
+    <div class="acciones">
+      <button type="submit" class="btn">Buscar</button>
+      <button type="button" class="btn secundario" (click)="limpiar()">Limpiar</button>
+    </div>
+  </form>
 </section>
 
-<section class="vista-panel">
-  <div class="vista-form" style="justify-content: space-between">
-    <h2 style="margin: 0">{{ lista().length }} resultado(s)</h2>
+<section class="tarjeta">
+  <div class="tarjeta-fila">
+    <h2>{{ lista().length }} resultado(s)</h2>
 
-    <div class="vista-form">
-      <div class="vista-campo" style="min-width: 160px">
+    <div class="filtros">
+      <div class="campo" style="flex: 0 0 180px">
         <label for="formato">Exportar como</label>
         <select id="formato" [(ngModel)]="formato">
           @for (f of formatos; track f.valor) {
@@ -50,28 +51,34 @@
           }
         </select>
       </div>
-      <button type="button" class="vista-btn" [disabled]="lista().length === 0" (click)="exportar()">Exportar</button>
+      <div class="acciones">
+        <button type="button" class="btn secundario" [disabled]="lista().length === 0" (click)="exportar()">Exportar</button>
+      </div>
     </div>
   </div>
 
-  <div class="vista-tabla-caja" style="margin-top: 14px">
-    <table class="vista-tabla">
-      <thead>
-        <tr><th>N°</th><th>Fecha</th><th>Tipo</th><th>Origen</th><th>Destino</th><th class="num">Monto</th><th>Comprobante</th></tr>
-      </thead>
-      <tbody>
-        @for (t of lista(); track t.id) {
-          <tr>
-            <td>{{ t.id }}</td>
-            <td>{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ t.tipo }}</td>
-            <td>{{ t.cuentaOrigen }}</td>
-            <td>{{ t.cuentaDestino }}</td>
-            <td class="num">S/ {{ t.monto | number:'1.2-2' }}</td>
-            <td>{{ t.comprobante }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  @if (lista().length === 0) {
+    <p class="vacio"><strong>No hay transacciones para mostrar.</strong>Ajusta los filtros y pulsa «Buscar».</p>
+  } @else {
+    <div class="tabla-caja" style="margin-top: 16px">
+      <table class="tabla">
+        <thead>
+          <tr><th>N°</th><th>Fecha</th><th>Tipo</th><th>Origen</th><th>Destino</th><th class="num">Monto</th><th>Comprobante</th></tr>
+        </thead>
+        <tbody>
+          @for (t of lista(); track t.id) {
+            <tr>
+              <td>{{ t.id }}</td>
+              <td class="mono">{{ t.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ t.tipo }}</td>
+              <td class="mono">{{ t.cuentaOrigen }}</td>
+              <td class="mono">{{ t.cuentaDestino }}</td>
+              <td class="num">S/ {{ t.monto | number:'1.2-2' }}</td>
+              <td class="mono">{{ t.comprobante }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </section>

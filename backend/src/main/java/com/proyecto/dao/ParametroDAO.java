@@ -10,8 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParametroDAO {
+public class ParametroDAO implements IParametroDAO {
 
+    @Override
     public List<Parametro> listar() throws SQLException {
 
         Connection con = ConexionBD.getInstancia().getConexion();
@@ -40,6 +41,7 @@ public class ParametroDAO {
         return lista;
     }
 
+    @Override
     public boolean actualizarValor(Long id, String valor) throws SQLException {
 
         Connection con = ConexionBD.getInstancia().getConexion();

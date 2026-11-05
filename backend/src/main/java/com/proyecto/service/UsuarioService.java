@@ -2,15 +2,24 @@ package com.proyecto.service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.proyecto.dao.UsuarioDAO;
+import com.proyecto.dao.IUsuarioDAO;
 import com.proyecto.model.Usuario;
+import java.util.List;
 import com.proyecto.patterns.AuditoriaPublisher;
 import com.proyecto.patterns.EventoAuditoria;
 
 @Service
 public class UsuarioService {
+    // D de SOLID: el servicio depende de la interfaz IUsuarioDAO; Spring
+    // inyecta la implementación (UsuarioDAO). Antes dependía de la clase JDBC.
     @Autowired
-    private UsuarioDAO usuarioDAO;
+    private IUsuarioDAO usuarioDAO;
+
+    // Capa de negocio: el controlador pide la lista al servicio y ya no
+    // accede al DAO directamente (se respeta Controller -> Service -> DAO).
+    public List<Usuario> listarUsuarios() {
+        return usuarioDAO.listarTodos();
+    }
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // Método para validar usuario

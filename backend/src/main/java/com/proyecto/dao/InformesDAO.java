@@ -12,8 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InformesDAO {
+public class InformesDAO implements IInformesDAO {
 
+    @Override
     public List<InformesUsuarios> usuariosPorRol() throws SQLException {
 
         Connection con = ConexionBD.getInstancia().getConexion();
@@ -50,6 +51,7 @@ public class InformesDAO {
     }
 
 
+    @Override
     public InformesCuentas resumenCuentas() throws SQLException {
 
         Connection con = ConexionBD.getInstancia().getConexion();
@@ -86,6 +88,7 @@ public class InformesDAO {
     }
 
 
+    @Override
     public List<InformesTransacciones> transaccionesPorTipo()
             throws SQLException {
 

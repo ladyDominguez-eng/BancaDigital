@@ -2,7 +2,11 @@ package com.proyecto.dao.factory;
 
 import com.proyecto.dao.CuentaDAO;
 import com.proyecto.dao.ICuentaDAO;
+import com.proyecto.dao.IInformesDAO;
+import com.proyecto.dao.IParametroDAO;
 import com.proyecto.dao.IUsuarioDAO;
+import com.proyecto.dao.InformesDAO;
+import com.proyecto.dao.ParametroDAO;
 import com.proyecto.dao.UsuarioDAO;
 
 /**
@@ -37,5 +41,15 @@ public class DAOFactory {
 
     public static ICuentaDAO crearCuentaDAO() {
         return new CuentaDAO();
+    }
+
+    // Se agregan los DAO que antes se creaban con "new" dentro de los
+    // servicios (ParametroService e InformesService).
+    public static IParametroDAO crearParametroDAO() {
+        return new ParametroDAO();
+    }
+
+    public static IInformesDAO crearInformesDAO() {
+        return new InformesDAO();
     }
 }

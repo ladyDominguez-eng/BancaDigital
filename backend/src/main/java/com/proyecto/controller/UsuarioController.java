@@ -1,6 +1,5 @@
 package com.proyecto.controller;
 
-import com.proyecto.dao.UsuarioDAO;
 import com.proyecto.model.Usuario;
 import com.proyecto.service.UsuarioService;
 import com.proyecto.model.CrearUsuarioRequest;
@@ -26,13 +25,12 @@ import java.util.Map;
 // Permite que el frontend Angular acceda al backend sin errores CORS
 public class UsuarioController {
 
-    // Inyección de dependencias: DAO para acceso a datos y Service para lógica de negocio
-    private final UsuarioDAO usuarioDAO;
+    // GRASP Controlador: solo coordina; la lógica y el acceso a datos
+    // van en el Service. Antes este controlador también recibía el DAO y
+    // lo usaba directamente, saltándose la capa de negocio.
     private final UsuarioService usuarioService;
 
-    // Constructor que recibe las dependencias necesarias
-    public UsuarioController(UsuarioDAO usuarioDAO, UsuarioService usuarioService) {
-        this.usuarioDAO = usuarioDAO;
+    public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
@@ -41,7 +39,7 @@ public class UsuarioController {
     @GetMapping // Maneja peticiones GET a /api/usuarios
     public List<Usuario> listar() {
         // Devuelve una lista con todos los usuarios registrados en la base de datos
-        return usuarioDAO.listarTodos();
+        return usuarioService.listarUsuarios();
     }
 
     @PostMapping // Maneja peticiones POST a /api/usuarios

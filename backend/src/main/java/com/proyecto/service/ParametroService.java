@@ -1,6 +1,7 @@
 package com.proyecto.service;
 
-import com.proyecto.dao.ParametroDAO;
+import com.proyecto.dao.IParametroDAO;
+import com.proyecto.dao.factory.DAOFactory;
 import com.proyecto.model.Parametro;
 
 import java.math.BigDecimal;
@@ -9,7 +10,8 @@ import java.util.List;
 
 public class ParametroService {
 
-    private final ParametroDAO dao = new ParametroDAO();
+    // D de SOLID: depende de la interfaz; la Factory decide la clase concreta.
+    private final IParametroDAO dao = DAOFactory.crearParametroDAO();
 
     public List<Parametro> listar() throws SQLException {
         return dao.listar();

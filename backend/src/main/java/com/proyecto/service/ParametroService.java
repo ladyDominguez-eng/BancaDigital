@@ -17,6 +17,28 @@ public class ParametroService {
         return dao.listar();
     }
 
+    /**
+     * Lee un parámetro numérico configurado por el administrador (RF-03).
+     * Si el parámetro no existe, devuelve el valor por defecto recibido.
+     * Así las reglas de negocio dejan de estar fijas en el código.
+     */
+    public BigDecimal obtenerNumero(String nombre, BigDecimal porDefecto)
+            throws SQLException {
+
+        Parametro p = dao.buscarPorNombre(nombre);
+
+        if (p == null) {
+            return porDefecto;
+        }
+
+        try {
+            return new BigDecimal(p.getValor().trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException(
+                "El parámetro " + nombre + " no tiene un valor numérico válido.");
+        }
+    }
+
     public void actualizar(Long id, String valor) throws SQLException {
 
         if (valor == null || valor.isBlank()) {

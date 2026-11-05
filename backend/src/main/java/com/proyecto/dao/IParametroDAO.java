@@ -12,4 +12,7 @@ import java.util.List;
 public interface IParametroDAO {
     List<Parametro> listar() throws SQLException;
     boolean actualizarValor(Long id, String valor) throws SQLException;
+
+    /** Devuelve el parámetro con ese nombre, o null si no existe. */
+    Parametro buscarPorNombre(String nombre) throws SQLException;
 }

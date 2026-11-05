@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * Traduce las excepciones a respuestas HTTP en un solo lugar.
@@ -31,6 +32,13 @@ public class ManejadorErrores {
     @ExceptionHandler({IllegalArgumentException.class, DateTimeParseException.class})
     public ResponseEntity<Map<String, String>> datosInvalidos(RuntimeException e) {
         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    }
+
+    // Un parámetro con formato incorrecto (fecha o número mal escrito) -> 400
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> parametroInvalido(MethodArgumentTypeMismatchException e) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("error", "El valor del parámetro '" + e.getName() + "' no es válido."));
     }
 
     // Acción que el estado actual no permite (State) -> 409 Conflicto
